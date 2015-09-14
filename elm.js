@@ -461,18 +461,18 @@ Elm.Animation.make = function (_elm) {
    return _elm.Animation.values;
 };
 Elm.Animation = Elm.Animation || {};
-Elm.Animation.ToggleExample = Elm.Animation.ToggleExample || {};
-Elm.Animation.ToggleExample.make = function (_elm) {
+Elm.Animation.ListExample = Elm.Animation.ListExample || {};
+Elm.Animation.ListExample.make = function (_elm) {
    "use strict";
    _elm.Animation = _elm.Animation || {};
-   _elm.Animation.ToggleExample = _elm.Animation.ToggleExample || {};
-   if (_elm.Animation.ToggleExample.values)
-   return _elm.Animation.ToggleExample.values;
+   _elm.Animation.ListExample = _elm.Animation.ListExample || {};
+   if (_elm.Animation.ListExample.values)
+   return _elm.Animation.ListExample.values;
    var _op = {},
    _N = Elm.Native,
    _U = _N.Utils.make(_elm),
    _L = _N.List.make(_elm),
-   $moduleName = "Animation.ToggleExample",
+   $moduleName = "Animation.ListExample",
    $Animation = Elm.Animation.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Effects = Elm.Effects.make(_elm),
@@ -487,85 +487,180 @@ Elm.Animation.ToggleExample.make = function (_elm) {
    $String = Elm.String.make(_elm),
    $Task = Elm.Task.make(_elm),
    $Time = Elm.Time.make(_elm);
-   var buttonStyle = _L.fromArray([{ctor: "_Tuple2"
-                                   ,_0: "color"
-                                   ,_1: "#555"}
-                                  ,{ctor: "_Tuple2"
-                                   ,_0: "text-transform"
-                                   ,_1: "uppercase"}
-                                  ,{ctor: "_Tuple2"
-                                   ,_0: "cursor"
-                                   ,_1: "pointer"}
-                                  ,{ctor: "_Tuple2"
-                                   ,_0: "letter-spacing"
-                                   ,_1: "0.15em"}
-                                  ,{ctor: "_Tuple2"
-                                   ,_0: "padding"
-                                   ,_1: "8px"}
-                                  ,{ctor: "_Tuple2"
-                                   ,_0: "border"
-                                   ,_1: "solid 2px #555"}
-                                  ,{ctor: "_Tuple2"
-                                   ,_0: "background"
-                                   ,_1: "white"}
-                                  ,{ctor: "_Tuple2"
-                                   ,_0: "borderRadius"
-                                   ,_1: "6px"}
-                                  ,{ctor: "_Tuple2"
-                                   ,_0: "fontWeight"
-                                   ,_1: "bold"}
-                                  ,{ctor: "_Tuple2"
-                                   ,_0: "font"
-                                   ,_1: "11px \'HelveticaNeue\'"}
-                                  ,{ctor: "_Tuple2"
-                                   ,_0: "outline"
-                                   ,_1: "none"}]);
+   var buttonStyle = function (isSelected) {
+      return function () {
+         var highlight = isSelected ? _L.fromArray([{ctor: "_Tuple2"
+                                                    ,_0: "borderBottomWidth"
+                                                    ,_1: "4px"}
+                                                   ,{ctor: "_Tuple2"
+                                                    ,_0: "background"
+                                                    ,_1: "#FFF6D6"}]) : _L.fromArray([]);
+         return A2($Basics._op["++"],
+         _L.fromArray([{ctor: "_Tuple2"
+                       ,_0: "color"
+                       ,_1: "#555"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "text-transform"
+                       ,_1: "uppercase"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "cursor"
+                       ,_1: "pointer"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "letter-spacing"
+                       ,_1: "0.15em"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "padding"
+                       ,_1: "8px"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "border"
+                       ,_1: "solid 2px #555"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "background"
+                       ,_1: "white"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "borderRadius"
+                       ,_1: "6px"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "fontWeight"
+                       ,_1: "bold"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "font"
+                       ,_1: "11px \'HelveticaNeue\'"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "outline"
+                       ,_1: "none"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "marginRight"
+                       ,_1: "10px"}]),
+         highlight);
+      }();
+   };
    var maxWidth = 200.0;
-   var anim = F2(function (t,s) {
-      return $Animation.duration(0.8 * $Time.second)($Animation.to(0)($Animation.from(s)($Animation.animation(t))));
+   var itemY = function (pos) {
+      return $Basics.toFloat(pos) * 50.0;
+   };
+   var ItemTick = function (a) {
+      return {ctor: "ItemTick"
+             ,_0: a};
+   };
+   var ItemModel = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,item: a
+             ,position: c
+             ,transition: b};
+   });
+   var sortItems = F2(function (order,
+   items) {
+      return function () {
+         switch (order.ctor)
+         {case "SortId":
+            return A2($List.sortBy,
+              function ($) {
+                 return function (_) {
+                    return _.id;
+                 }(function (_) {
+                    return _.item;
+                 }($));
+              },
+              items);
+            case "SortName":
+            return A2($List.sortBy,
+              function ($) {
+                 return function (_) {
+                    return _.name;
+                 }(function (_) {
+                    return _.item;
+                 }($));
+              },
+              items);}
+         _U.badCase($moduleName,
+         "between lines 99 and 101");
+      }();
    });
    var Tick = function (a) {
       return {ctor: "Tick",_0: a};
    };
-   var Toggle = {ctor: "Toggle"};
-   var Model = F3(function (a,
-   b,
-   c) {
+   var Sort = function (a) {
+      return {ctor: "Sort",_0: a};
+   };
+   var Model = F2(function (a,b) {
       return {_: {}
-             ,state: a
-             ,time: b
-             ,transition: c};
+             ,items: b
+             ,sort: a};
    });
+   var Item = F2(function (a,b) {
+      return {_: {},id: a,name: b};
+   });
+   var SortId = {ctor: "SortId"};
+   var SortName = {ctor: "SortName"};
    var Closed = {ctor: "Closed"};
    var Open = {ctor: "Open"};
-   var dump = F2(function (time,
-   ts) {
-      return $Basics.toString(A2($List.map,
-      $Animation.animate(time),
-      ts));
+   var anim = F2(function (t,s) {
+      return $Animation.duration(0.8 * $Time.second)($Animation.to(0)($Animation.from(s)($Animation.animation(t))));
    });
-   var transitionValue = F2(function (time,
-   trans) {
-      return $List.sum(A2($List.map,
-      $Animation.animate(time),
-      trans));
-   });
-   var boxWidth = function (m) {
-      return function () {
-         var a = A2(transitionValue,
-         m.time,
-         m.transition);
-         return function () {
-            var _v0 = m.state;
-            switch (_v0.ctor)
-            {case "Closed": return 0.0 + a;
-               case "Open":
-               return maxWidth + a;}
-            _U.badCase($moduleName,
-            "between lines 128 and 130");
-         }();
-      }();
+   var dump = function (trans) {
+      return A2($String.join,
+      "\n",
+      _L.fromArray([A2($Basics._op["++"],
+                   "time: ",
+                   $Basics.toString($Basics.round(trans.time / 1000)))
+                   ,A2($Basics._op["++"],
+                   "num: ",
+                   $Basics.toString($List.length(trans.animations)))
+                   ,$Basics.toString(A2($List.map,
+                   $Animation.animate(trans.time),
+                   trans.animations))]));
    };
+   var value = function (trans) {
+      return $List.sum(A2($List.map,
+      $Animation.animate(trans.time),
+      trans.animations));
+   };
+   var itemView = F2(function (address,
+   model) {
+      return function () {
+         var y = itemY(model.position) + value(model.transition);
+         return A2($Html.div,
+         _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                            ,_0: "background"
+                                                            ,_1: "#E6E6EF"}
+                                                           ,{ctor: "_Tuple2"
+                                                            ,_0: "border"
+                                                            ,_1: "solid 1px #716DCF"}
+                                                           ,{ctor: "_Tuple2"
+                                                            ,_0: "borderRightWidth"
+                                                            ,_1: "10px"}
+                                                           ,{ctor: "_Tuple2"
+                                                            ,_0: "borderLeftWidth"
+                                                            ,_1: "0px"}
+                                                           ,{ctor: "_Tuple2"
+                                                            ,_0: "borderTopWidth"
+                                                            ,_1: "0px"}
+                                                           ,{ctor: "_Tuple2"
+                                                            ,_0: "margin"
+                                                            ,_1: "10px"}
+                                                           ,{ctor: "_Tuple2"
+                                                            ,_0: "marginLeft"
+                                                            ,_1: "0px"}
+                                                           ,{ctor: "_Tuple2"
+                                                            ,_0: "padding"
+                                                            ,_1: "10px"}
+                                                           ,{ctor: "_Tuple2"
+                                                            ,_0: "width"
+                                                            ,_1: "320px"}
+                                                           ,{ctor: "_Tuple2"
+                                                            ,_0: "position"
+                                                            ,_1: "absolute"}
+                                                           ,{ctor: "_Tuple2"
+                                                            ,_0: "top"
+                                                            ,_1: A2($Basics._op["++"],
+                                                            $Basics.toString(y),
+                                                            "px")}]))]),
+         _L.fromArray([$Html.text(model.item.name)]));
+      }();
+   });
    var view = F2(function (address,
    model) {
       return A2($Html.div,
@@ -577,114 +672,130 @@ Elm.Animation.ToggleExample.make = function (_elm) {
                                                                       ,_0: "margin-bottom"
                                                                       ,_1: "10px"}]))]),
                    _L.fromArray([A2($Html.button,
-                   _L.fromArray([$Html$Attributes.style(buttonStyle)
-                                ,A2($Html$Events.onClick,
-                                address,
-                                Toggle)]),
-                   _L.fromArray([$Html.text("Toggle")]))]))
+                                _L.fromArray([$Html$Attributes.style(buttonStyle(_U.eq(model.sort,
+                                             SortName)))
+                                             ,A2($Html$Events.onClick,
+                                             address,
+                                             Sort(SortName))]),
+                                _L.fromArray([$Html.text("Sort Name")]))
+                                ,A2($Html.button,
+                                _L.fromArray([$Html$Attributes.style(buttonStyle(_U.eq(model.sort,
+                                             SortId)))
+                                             ,A2($Html$Events.onClick,
+                                             address,
+                                             Sort(SortId))]),
+                                _L.fromArray([$Html.text("Sort Id")]))]))
                    ,A2($Html.div,
                    _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                                      ,_0: "width"
-                                                                      ,_1: A2($Basics._op["++"],
-                                                                      $Basics.toString(boxWidth(model)),
-                                                                      "px")}
-                                                                     ,{ctor: "_Tuple2"
-                                                                      ,_0: "height"
-                                                                      ,_1: "150px"}
-                                                                     ,{ctor: "_Tuple2"
-                                                                      ,_0: "background"
-                                                                      ,_1: "#E6E6EF"}
-                                                                     ,{ctor: "_Tuple2"
-                                                                      ,_0: "border-right"
-                                                                      ,_1: "solid 10px #716DCF"}]))]),
-                   _L.fromArray([]))
-                   ,A2($Html.div,
-                   _L.fromArray([]),
-                   _L.fromArray([A2($Html.pre,
-                   _L.fromArray([]),
-                   _L.fromArray([$Html.text(A2($String.join,
-                   "\n",
-                   _L.fromArray([A2($Basics._op["++"],
-                                "time: ",
-                                $Basics.toString($Basics.round(model.time / 1000)))
-                                ,A2($Basics._op["++"],
-                                "trans: ",
-                                A2($Basics._op["++"],
-                                $Basics.toString($List.length(model.transition)),
-                                A2($Basics._op["++"],
-                                " ",
-                                A2(dump,
-                                model.time,
-                                model.transition))))])))]))]))]));
+                                                                      ,_0: "position"
+                                                                      ,_1: "relative"}]))]),
+                   A2($List.map,
+                   itemView(address),
+                   model.items))]));
    });
-   var cleanup = F2(function (time,
-   ts) {
-      return A2($List.filter,
-      function ($) {
-         return $Basics.not($Animation.isDone(time)($));
-      },
-      ts);
+   var tick = F2(function (time,
+   trans) {
+      return function () {
+         var anims = A2($List.filter,
+         function ($) {
+            return $Basics.not($Animation.isDone(time)($));
+         },
+         trans.animations);
+         return _U.replace([["animations"
+                            ,anims]
+                           ,["time",time]],
+         trans);
+      }();
    });
-   var addTransition = F2(function (a,
-   ts) {
-      return A2($List._op["::"],
-      a,
-      ts);
+   var updateItem = F2(function (action,
+   model) {
+      return function () {
+         switch (action.ctor)
+         {case "ItemTick":
+            return _U.replace([["transition"
+                               ,A2(tick,
+                               action._0,
+                               model.transition)]],
+              model);}
+         _U.badCase($moduleName,
+         "between lines 149 and 151");
+      }();
+   });
+   var add = F2(function (a,
+   trans) {
+      return _U.replace([["animations"
+                         ,A2($List._op["::"],
+                         a,
+                         trans.animations)]],
+      trans);
+   });
+   var updatePosition = F2(function (pos,
+   model) {
+      return function () {
+         var dy = itemY(model.position) - itemY(pos);
+         return _U.replace([["position"
+                            ,pos]
+                           ,["transition"
+                            ,A2(add,
+                            A2(anim,
+                            model.transition.time,
+                            dy),
+                            model.transition)]],
+         model);
+      }();
    });
    var update = F2(function (action,
    model) {
       return function () {
          switch (action.ctor)
-         {case "Tick":
-            return {ctor: "_Tuple2"
-                   ,_0: _U.replace([["time"
-                                    ,action._0]
-                                   ,["transition"
-                                    ,A2(cleanup,
-                                    model.time,
-                                    model.transition)]],
-                   model)
-                   ,_1: $Effects.tick(Tick)};
-            case "Toggle":
+         {case "Sort":
             return function () {
-                 var model$ = function () {
-                    var _v3 = model.state;
-                    switch (_v3.ctor)
-                    {case "Closed":
-                       return _U.replace([["state"
-                                          ,Open]
-                                         ,["transition"
-                                          ,A2(addTransition,
-                                          A2(anim,
-                                          model.time,
-                                          0 - maxWidth),
-                                          model.transition)]],
-                         model);
-                       case "Open":
-                       return _U.replace([["state"
-                                          ,Closed]
-                                         ,["transition"
-                                          ,A2(addTransition,
-                                          A2(anim,model.time,maxWidth),
-                                          model.transition)]],
-                         model);}
-                    _U.badCase($moduleName,
-                    "between lines 63 and 75");
-                 }();
+                 var items = $List.indexedMap(updatePosition)(A2(sortItems,
+                 action._0,
+                 model.items));
                  return {ctor: "_Tuple2"
-                        ,_0: model$
+                        ,_0: _U.replace([["sort"
+                                         ,action._0]
+                                        ,["items",items]],
+                        model)
                         ,_1: $Effects.none};
+              }();
+            case "Tick":
+            return function () {
+                 var items = A2($List.map,
+                 updateItem(ItemTick(action._0)),
+                 model.items);
+                 return {ctor: "_Tuple2"
+                        ,_0: _U.replace([["items"
+                                         ,items]],
+                        model)
+                        ,_1: $Effects.tick(Tick)};
               }();}
          _U.badCase($moduleName,
-         "between lines 61 and 81");
+         "between lines 81 and 93");
       }();
    });
-   var none = _L.fromArray([]);
+   var none = {_: {}
+              ,animations: _L.fromArray([])
+              ,time: 0};
+   var itemModel = F2(function (pos,
+   item) {
+      return {_: {}
+             ,item: item
+             ,position: pos
+             ,transition: none};
+   });
    var init = {ctor: "_Tuple2"
               ,_0: {_: {}
-                   ,state: Closed
-                   ,time: 0
-                   ,transition: none}
+                   ,items: A2($List.indexedMap,
+                   itemModel,
+                   _L.fromArray([A2(Item,1,"one")
+                                ,A2(Item,2,"two")
+                                ,A2(Item,3,"three")
+                                ,A2(Item,4,"four")
+                                ,A2(Item,5,"five")
+                                ,A2(Item,6,"six")]))
+                   ,sort: SortId}
               ,_1: $Effects.tick(Tick)};
    var app = $StartApp.start({_: {}
                              ,init: init
@@ -694,27 +805,44 @@ Elm.Animation.ToggleExample.make = function (_elm) {
    var main = app.html;
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",
    app.tasks);
-   _elm.Animation.ToggleExample.values = {_op: _op
-                                         ,none: none
-                                         ,addTransition: addTransition
-                                         ,cleanup: cleanup
-                                         ,transitionValue: transitionValue
-                                         ,dump: dump
-                                         ,Open: Open
-                                         ,Closed: Closed
-                                         ,Model: Model
-                                         ,init: init
-                                         ,Toggle: Toggle
-                                         ,Tick: Tick
-                                         ,update: update
-                                         ,anim: anim
-                                         ,view: view
-                                         ,maxWidth: maxWidth
-                                         ,boxWidth: boxWidth
-                                         ,buttonStyle: buttonStyle
-                                         ,app: app
-                                         ,main: main};
-   return _elm.Animation.ToggleExample.values;
+   var Transition = F2(function (a,
+   b) {
+      return {_: {}
+             ,animations: a
+             ,time: b};
+   });
+   _elm.Animation.ListExample.values = {_op: _op
+                                       ,Transition: Transition
+                                       ,none: none
+                                       ,add: add
+                                       ,tick: tick
+                                       ,value: value
+                                       ,dump: dump
+                                       ,anim: anim
+                                       ,Open: Open
+                                       ,Closed: Closed
+                                       ,SortName: SortName
+                                       ,SortId: SortId
+                                       ,Item: Item
+                                       ,Model: Model
+                                       ,init: init
+                                       ,Sort: Sort
+                                       ,Tick: Tick
+                                       ,update: update
+                                       ,sortItems: sortItems
+                                       ,view: view
+                                       ,ItemModel: ItemModel
+                                       ,itemModel: itemModel
+                                       ,updatePosition: updatePosition
+                                       ,ItemTick: ItemTick
+                                       ,updateItem: updateItem
+                                       ,itemY: itemY
+                                       ,itemView: itemView
+                                       ,maxWidth: maxWidth
+                                       ,buttonStyle: buttonStyle
+                                       ,app: app
+                                       ,main: main};
+   return _elm.Animation.ListExample.values;
 };
 Elm.Array = Elm.Array || {};
 Elm.Array.make = function (_elm) {
@@ -5330,915 +5458,6 @@ Elm.List.make = function (_elm) {
                       ,sortBy: sortBy
                       ,sortWith: sortWith};
    return _elm.List.values;
-};
-Elm.List = Elm.List || {};
-Elm.List.Extra = Elm.List.Extra || {};
-Elm.List.Extra.make = function (_elm) {
-   "use strict";
-   _elm.List = _elm.List || {};
-   _elm.List.Extra = _elm.List.Extra || {};
-   if (_elm.List.Extra.values)
-   return _elm.List.Extra.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "List.Extra",
-   $Basics = Elm.Basics.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Set = Elm.Set.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var zip5 = $List.map5(F5(function (v0,
-   v1,
-   v2,
-   v3,
-   v4) {
-      return {ctor: "_Tuple5"
-             ,_0: v0
-             ,_1: v1
-             ,_2: v2
-             ,_3: v3
-             ,_4: v4};
-   }));
-   var zip4 = $List.map4(F4(function (v0,
-   v1,
-   v2,
-   v3) {
-      return {ctor: "_Tuple4"
-             ,_0: v0
-             ,_1: v1
-             ,_2: v2
-             ,_3: v3};
-   }));
-   var zip3 = $List.map3(F3(function (v0,
-   v1,
-   v2) {
-      return {ctor: "_Tuple3"
-             ,_0: v0
-             ,_1: v1
-             ,_2: v2};
-   }));
-   var zip = $List.map2(F2(function (v0,
-   v1) {
-      return {ctor: "_Tuple2"
-             ,_0: v0
-             ,_1: v1};
-   }));
-   var isPrefixOf = function (prefix) {
-      return function ($) {
-         return $List.all($Basics.identity)(A2($List.map2,
-         F2(function (x,y) {
-            return _U.eq(x,y);
-         }),
-         prefix)($));
-      };
-   };
-   var isSuffixOf = F2(function (suffix,
-   xs) {
-      return A2(isPrefixOf,
-      $List.reverse(suffix),
-      $List.reverse(xs));
-   });
-   var selectSplit = function (xs) {
-      return function () {
-         switch (xs.ctor)
-         {case "::":
-            return A2($List._op["::"],
-              {ctor: "_Tuple3"
-              ,_0: _L.fromArray([])
-              ,_1: xs._0
-              ,_2: xs._1},
-              A2($List.map,
-              function (_v3) {
-                 return function () {
-                    switch (_v3.ctor)
-                    {case "_Tuple3":
-                       return {ctor: "_Tuple3"
-                              ,_0: A2($List._op["::"],
-                              xs._0,
-                              _v3._0)
-                              ,_1: _v3._1
-                              ,_2: _v3._2};}
-                    _U.badCase($moduleName,
-                    "on line 534, column 49 to 61");
-                 }();
-              },
-              selectSplit(xs._1)));
-            case "[]":
-            return _L.fromArray([]);}
-         _U.badCase($moduleName,
-         "between lines 532 and 534");
-      }();
-   };
-   var select = function (xs) {
-      return function () {
-         switch (xs.ctor)
-         {case "::":
-            return A2($List._op["::"],
-              {ctor: "_Tuple2"
-              ,_0: xs._0
-              ,_1: xs._1},
-              A2($List.map,
-              function (_v11) {
-                 return function () {
-                    switch (_v11.ctor)
-                    {case "_Tuple2":
-                       return {ctor: "_Tuple2"
-                              ,_0: _v11._0
-                              ,_1: A2($List._op["::"],
-                              xs._0,
-                              _v11._1)};}
-                    _U.badCase($moduleName,
-                    "on line 524, column 41 to 48");
-                 }();
-              },
-              select(xs._1)));
-            case "[]":
-            return _L.fromArray([]);}
-         _U.badCase($moduleName,
-         "between lines 522 and 524");
-      }();
-   };
-   var tails = A2($List.foldr,
-   F2(function (e,_v15) {
-      return function () {
-         switch (_v15.ctor)
-         {case "::":
-            return A2($List._op["::"],
-              A2($List._op["::"],e,_v15._0),
-              A2($List._op["::"],
-              _v15._0,
-              _v15._1));}
-         _U.badCase($moduleName,
-         "on line 514, column 31 to 43");
-      }();
-   }),
-   _L.fromArray([_L.fromArray([])]));
-   var isInfixOf = F2(function (infix,
-   xs) {
-      return A2($List.any,
-      isPrefixOf(infix),
-      tails(xs));
-   });
-   var inits = A2($List.foldr,
-   F2(function (e,acc) {
-      return A2($List._op["::"],
-      _L.fromArray([]),
-      A2($List.map,
-      F2(function (x,y) {
-         return A2($List._op["::"],
-         x,
-         y);
-      })(e),
-      acc));
-   }),
-   _L.fromArray([_L.fromArray([])]));
-   var groupByTransitive = F2(function (cmp,
-   xs$) {
-      return function () {
-         switch (xs$.ctor)
-         {case "::": switch (xs$._1.ctor)
-              {case "::": return function () {
-                      var _ = A2(groupByTransitive,
-                      cmp,
-                      xs$._1);
-                      var r = function () {
-                         switch (_.ctor)
-                         {case "::": return _;}
-                         _U.badCase($moduleName,
-                         "on line 497, column 28 to 52");
-                      }();
-                      var y = function () {
-                         switch (_.ctor)
-                         {case "::": return _._0;}
-                         _U.badCase($moduleName,
-                         "on line 497, column 28 to 52");
-                      }();
-                      var ys = function () {
-                         switch (_.ctor)
-                         {case "::": return _._1;}
-                         _U.badCase($moduleName,
-                         "on line 497, column 28 to 52");
-                      }();
-                      return A2(cmp,
-                      xs$._0,
-                      xs$._1._0) ? A2($List._op["::"],
-                      A2($List._op["::"],xs$._0,y),
-                      ys) : A2($List._op["::"],
-                      _L.fromArray([xs$._0]),
-                      r);
-                   }();
-                 case "[]":
-                 return _L.fromArray([_L.fromArray([xs$._0])]);}
-              break;
-            case "[]":
-            return _L.fromArray([]);}
-         _U.badCase($moduleName,
-         "between lines 493 and 500");
-      }();
-   });
-   var stripPrefix = F2(function (prefix,
-   xs) {
-      return function () {
-         var step = F2(function (e,
-         m) {
-            return function () {
-               switch (m.ctor)
-               {case "Just": switch (m._0.ctor)
-                    {case "::": return _U.eq(e,
-                         m._0._0) ? $Maybe.Just(m._0._1) : $Maybe.Nothing;
-                       case "[]":
-                       return $Maybe.Nothing;}
-                    break;
-                  case "Nothing":
-                  return $Maybe.Nothing;}
-               _U.badCase($moduleName,
-               "between lines 454 and 460");
-            }();
-         });
-         return A3($List.foldl,
-         step,
-         $Maybe.Just(xs),
-         prefix);
-      }();
-   });
-   var dropWhileEnd = function (p) {
-      return A2($List.foldr,
-      F2(function (x,xs) {
-         return p(x) && $List.isEmpty(xs) ? _L.fromArray([]) : A2($List._op["::"],
-         x,
-         xs);
-      }),
-      _L.fromArray([]));
-   };
-   var takeWhileEnd = function (p) {
-      return function () {
-         var step = F2(function (x,
-         _v37) {
-            return function () {
-               switch (_v37.ctor)
-               {case "_Tuple2":
-                  return p(x) && _v37._1 ? {ctor: "_Tuple2"
-                                           ,_0: A2($List._op["::"],
-                                           x,
-                                           _v37._0)
-                                           ,_1: true} : {ctor: "_Tuple2"
-                                                        ,_0: _v37._0
-                                                        ,_1: false};}
-               _U.badCase($moduleName,
-               "on line 413, column 24 to 73");
-            }();
-         });
-         return function ($) {
-            return $Basics.fst(A2($List.foldr,
-            step,
-            {ctor: "_Tuple2"
-            ,_0: _L.fromArray([])
-            ,_1: true})($));
-         };
-      }();
-   };
-   var splitAt = F2(function (n,
-   xs) {
-      return {ctor: "_Tuple2"
-             ,_0: A2($List.take,n,xs)
-             ,_1: A2($List.drop,n,xs)};
-   });
-   var unfoldr = F2(function (f,
-   seed) {
-      return function () {
-         var _v41 = f(seed);
-         switch (_v41.ctor)
-         {case "Just":
-            switch (_v41._0.ctor)
-              {case "_Tuple2":
-                 return A2($List._op["::"],
-                   _v41._0._0,
-                   A2(unfoldr,f,_v41._0._1));}
-              break;
-            case "Nothing":
-            return _L.fromArray([]);}
-         _U.badCase($moduleName,
-         "between lines 390 and 392");
-      }();
-   });
-   var scanr1 = F2(function (f,
-   xs$) {
-      return function () {
-         switch (xs$.ctor)
-         {case "::": switch (xs$._1.ctor)
-              {case "[]":
-                 return _L.fromArray([xs$._0]);}
-              return function () {
-                 var _ = A2(scanr1,f,xs$._1);
-                 var q = function () {
-                    switch (_.ctor)
-                    {case "::": return _._0;}
-                    _U.badCase($moduleName,
-                    "on line 381, column 37 to 48");
-                 }();
-                 var qs = function () {
-                    switch (_.ctor)
-                    {case "::": return _;}
-                    _U.badCase($moduleName,
-                    "on line 381, column 37 to 48");
-                 }();
-                 return A2($List._op["::"],
-                 A2(f,xs$._0,q),
-                 qs);
-              }();
-            case "[]":
-            return _L.fromArray([]);}
-         _U.badCase($moduleName,
-         "between lines 378 and 382");
-      }();
-   });
-   var scanr = F3(function (f,
-   acc,
-   xs$) {
-      return function () {
-         switch (xs$.ctor)
-         {case "::": return function () {
-                 var _ = A3(scanr,
-                 f,
-                 acc,
-                 xs$._1);
-                 var q = function () {
-                    switch (_.ctor)
-                    {case "::": return _._0;}
-                    _U.badCase($moduleName,
-                    "on line 367, column 37 to 51");
-                 }();
-                 var qs = function () {
-                    switch (_.ctor)
-                    {case "::": return _;}
-                    _U.badCase($moduleName,
-                    "on line 367, column 37 to 51");
-                 }();
-                 return A2($List._op["::"],
-                 A2(f,xs$._0,q),
-                 qs);
-              }();
-            case "[]":
-            return _L.fromArray([acc]);}
-         _U.badCase($moduleName,
-         "between lines 365 and 368");
-      }();
-   });
-   var scanl1 = F2(function (f,
-   xs$) {
-      return function () {
-         switch (xs$.ctor)
-         {case "::":
-            return A3($List.scanl,
-              f,
-              xs$._0,
-              xs$._1);
-            case "[]":
-            return _L.fromArray([]);}
-         _U.badCase($moduleName,
-         "between lines 350 and 352");
-      }();
-   });
-   var foldr1 = F2(function (f,
-   xs) {
-      return function () {
-         var mf = F2(function (x,m) {
-            return $Maybe.Just(function () {
-               switch (m.ctor)
-               {case "Just": return A2(f,
-                    x,
-                    m._0);
-                  case "Nothing": return x;}
-               _U.badCase($moduleName,
-               "between lines 329 and 331");
-            }());
-         });
-         return A3($List.foldr,
-         mf,
-         $Maybe.Nothing,
-         xs);
-      }();
-   });
-   var foldl1 = F2(function (f,
-   xs) {
-      return function () {
-         var mf = F2(function (x,m) {
-            return $Maybe.Just(function () {
-               switch (m.ctor)
-               {case "Just": return A2(f,
-                    m._0,
-                    x);
-                  case "Nothing": return x;}
-               _U.badCase($moduleName,
-               "between lines 314 and 316");
-            }());
-         });
-         return A3($List.foldl,
-         mf,
-         $Maybe.Nothing,
-         xs);
-      }();
-   });
-   var permutations = function (xs$) {
-      return function () {
-         switch (xs$.ctor)
-         {case "[]":
-            return _L.fromArray([_L.fromArray([])]);}
-         return function () {
-            var f = function (_v71) {
-               return function () {
-                  switch (_v71.ctor)
-                  {case "_Tuple2":
-                     return A2($List.map,
-                       F2(function (x,y) {
-                          return A2($List._op["::"],
-                          x,
-                          y);
-                       })(_v71._0),
-                       permutations(_v71._1));}
-                  _U.badCase($moduleName,
-                  "on line 302, column 26 to 54");
-               }();
-            };
-            return A2($List.concatMap,
-            f,
-            select(xs$));
-         }();
-      }();
-   };
-   var isPermutationOf = F2(function (permut,
-   xs) {
-      return A2($List.member,
-      permut,
-      permutations(xs));
-   });
-   var subsequencesNonEmpty = function (xs) {
-      return function () {
-         switch (xs.ctor)
-         {case "::": return function () {
-                 var f = F2(function (ys,r) {
-                    return A2($List._op["::"],
-                    ys,
-                    A2($List._op["::"],
-                    A2($List._op["::"],xs._0,ys),
-                    r));
-                 });
-                 return A2($List._op["::"],
-                 _L.fromArray([xs._0]),
-                 A3($List.foldr,
-                 f,
-                 _L.fromArray([]),
-                 subsequencesNonEmpty(xs._1)));
-              }();
-            case "[]":
-            return _L.fromArray([]);}
-         _U.badCase($moduleName,
-         "between lines 288 and 292");
-      }();
-   };
-   var subsequences = function (xs) {
-      return A2($List._op["::"],
-      _L.fromArray([]),
-      subsequencesNonEmpty(xs));
-   };
-   var isSubsequenceOf = F2(function (subseq,
-   xs) {
-      return A2($List.member,
-      subseq,
-      subsequences(xs));
-   });
-   var transpose = function (ll) {
-      return function () {
-         switch (ll.ctor)
-         {case "::": switch (ll._0.ctor)
-              {case "::": return function () {
-                      var tails = A2($List.filterMap,
-                      $List.tail,
-                      ll._1);
-                      var heads = A2($List.filterMap,
-                      $List.head,
-                      ll._1);
-                      return A2($List._op["::"],
-                      A2($List._op["::"],
-                      ll._0._0,
-                      heads),
-                      transpose(A2($List._op["::"],
-                      ll._0._1,
-                      tails)));
-                   }();
-                 case "[]":
-                 return transpose(ll._1);}
-              break;
-            case "[]":
-            return _L.fromArray([]);}
-         _U.badCase($moduleName,
-         "between lines 265 and 273");
-      }();
-   };
-   var intercalate = function (xs) {
-      return function ($) {
-         return $List.concat($List.intersperse(xs)($));
-      };
-   };
-   var replaceIf = F3(function (predicate,
-   replacement,
-   list) {
-      return A2($List.map,
-      function (item) {
-         return predicate(item) ? replacement : item;
-      },
-      list);
-   });
-   var findIndices = function (p) {
-      return function ($) {
-         return $List.map($Basics.fst)($List.filter(function (_v83) {
-            return function () {
-               switch (_v83.ctor)
-               {case "_Tuple2":
-                  return p(_v83._1);}
-               _U.badCase($moduleName,
-               "on line 240, column 46 to 49");
-            }();
-         })($List.indexedMap(F2(function (v0,
-         v1) {
-            return {ctor: "_Tuple2"
-                   ,_0: v0
-                   ,_1: v1};
-         }))($)));
-      };
-   };
-   var findIndex = function (p) {
-      return function ($) {
-         return $List.head(findIndices(p)($));
-      };
-   };
-   var elemIndices = function (x) {
-      return findIndices(F2(function (x,
-      y) {
-         return _U.eq(x,y);
-      })(x));
-   };
-   var elemIndex = function (x) {
-      return findIndex(F2(function (x,
-      y) {
-         return _U.eq(x,y);
-      })(x));
-   };
-   var find = F2(function (predicate,
-   list) {
-      return function () {
-         switch (list.ctor)
-         {case "::":
-            return predicate(list._0) ? $Maybe.Just(list._0) : A2(find,
-              predicate,
-              list._1);
-            case "[]":
-            return $Maybe.Nothing;}
-         _U.badCase($moduleName,
-         "between lines 196 and 204");
-      }();
-   });
-   var notMember = function (x) {
-      return function ($) {
-         return $Basics.not($List.member(x)($));
-      };
-   };
-   var andThen = $Basics.flip($List.concatMap);
-   var lift2 = F3(function (f,
-   la,
-   lb) {
-      return A2(andThen,
-      la,
-      function (a) {
-         return A2(andThen,
-         lb,
-         function (b) {
-            return _L.fromArray([A2(f,
-            a,
-            b)]);
-         });
-      });
-   });
-   var lift3 = F4(function (f,
-   la,
-   lb,
-   lc) {
-      return A2(andThen,
-      la,
-      function (a) {
-         return A2(andThen,
-         lb,
-         function (b) {
-            return A2(andThen,
-            lc,
-            function (c) {
-               return _L.fromArray([A3(f,
-               a,
-               b,
-               c)]);
-            });
-         });
-      });
-   });
-   var lift4 = F5(function (f,
-   la,
-   lb,
-   lc,
-   ld) {
-      return A2(andThen,
-      la,
-      function (a) {
-         return A2(andThen,
-         lb,
-         function (b) {
-            return A2(andThen,
-            lc,
-            function (c) {
-               return A2(andThen,
-               ld,
-               function (d) {
-                  return _L.fromArray([A4(f,
-                  a,
-                  b,
-                  c,
-                  d)]);
-               });
-            });
-         });
-      });
-   });
-   var andMap = F2(function (fl,
-   l) {
-      return A3($List.map2,
-      F2(function (x,y) {
-         return x(y);
-      }),
-      fl,
-      l);
-   });
-   var dropDuplicates = function (list) {
-      return function () {
-         var step = F2(function (next,
-         _v90) {
-            return function () {
-               switch (_v90.ctor)
-               {case "_Tuple2":
-                  return A2($Set.member,
-                    next,
-                    _v90._0) ? {ctor: "_Tuple2"
-                               ,_0: _v90._0
-                               ,_1: _v90._1} : {ctor: "_Tuple2"
-                                               ,_0: A2($Set.insert,
-                                               next,
-                                               _v90._0)
-                                               ,_1: A2($List._op["::"],
-                                               next,
-                                               _v90._1)};}
-               _U.badCase($moduleName,
-               "between lines 136 and 138");
-            }();
-         });
-         return $List.reverse($Basics.snd(A3($List.foldl,
-         step,
-         {ctor: "_Tuple2"
-         ,_0: $Set.empty
-         ,_1: _L.fromArray([])},
-         list)));
-      }();
-   };
-   var dropWhile = F2(function (predicate,
-   list) {
-      return function () {
-         switch (list.ctor)
-         {case "::":
-            return predicate(list._0) ? A2(dropWhile,
-              predicate,
-              list._1) : list;
-            case "[]":
-            return _L.fromArray([]);}
-         _U.badCase($moduleName,
-         "between lines 125 and 128");
-      }();
-   });
-   var takeWhile = F2(function (predicate,
-   list) {
-      return function () {
-         switch (list.ctor)
-         {case "::":
-            return predicate(list._0) ? A2($List._op["::"],
-              list._0,
-              A2(takeWhile,
-              predicate,
-              list._1)) : _L.fromArray([]);
-            case "[]":
-            return _L.fromArray([]);}
-         _U.badCase($moduleName,
-         "between lines 116 and 119");
-      }();
-   });
-   var span = F2(function (p,xs) {
-      return {ctor: "_Tuple2"
-             ,_0: A2(takeWhile,p,xs)
-             ,_1: A2(dropWhile,p,xs)};
-   });
-   var $break = function (p) {
-      return span(function ($) {
-         return $Basics.not(p($));
-      });
-   };
-   var groupBy = F2(function (eq,
-   xs$) {
-      return function () {
-         switch (xs$.ctor)
-         {case "::": return function () {
-                 var $ = A2(span,
-                 eq(xs$._0),
-                 xs$._1),
-                 ys = $._0,
-                 zs = $._1;
-                 return A2($List._op["::"],
-                 A2($List._op["::"],xs$._0,ys),
-                 A2(groupBy,eq,zs));
-              }();
-            case "[]":
-            return _L.fromArray([]);}
-         _U.badCase($moduleName,
-         "between lines 482 and 485");
-      }();
-   });
-   var group = groupBy(F2(function (x,
-   y) {
-      return _U.eq(x,y);
-   }));
-   var minimumBy = F2(function (f,
-   ls) {
-      return function () {
-         var minBy = F3(function (f,
-         x,
-         y) {
-            return _U.cmp(f(x),
-            f(y)) < 0 ? x : y;
-         });
-         return function () {
-            switch (ls.ctor)
-            {case "::":
-               return $Maybe.Just(A3($List.foldl,
-                 minBy(f),
-                 ls._0,
-                 ls._1));}
-            return $Maybe.Nothing;
-         }();
-      }();
-   });
-   var maximumBy = F2(function (f,
-   ls) {
-      return function () {
-         var maxBy = F3(function (f,
-         x,
-         y) {
-            return _U.cmp(f(x),
-            f(y)) > 0 ? x : y;
-         });
-         return function () {
-            switch (ls.ctor)
-            {case "::":
-               return $Maybe.Just(A3($List.foldl,
-                 maxBy(f),
-                 ls._0,
-                 ls._1));}
-            return $Maybe.Nothing;
-         }();
-      }();
-   });
-   var uncons = function (xs) {
-      return function () {
-         switch (xs.ctor)
-         {case "::":
-            return $Maybe.Just({ctor: "_Tuple2"
-                               ,_0: xs._0
-                               ,_1: xs._1});
-            case "[]":
-            return $Maybe.Nothing;}
-         _U.badCase($moduleName,
-         "between lines 90 and 92");
-      }();
-   };
-   var init = function () {
-      var maybe = F2(function (d,
-      f) {
-         return function ($) {
-            return $Maybe.withDefault(d)($Maybe.map(f)($));
-         };
-      });
-      return A2($List.foldr,
-      function ($) {
-         return F2(function (x,y) {
-            return function ($) {
-               return x(y($));
-            };
-         })($Maybe.Just)(maybe(_L.fromArray([]))(F2(function (x,
-         y) {
-            return A2($List._op["::"],
-            x,
-            y);
-         })($)));
-      },
-      $Maybe.Nothing);
-   }();
-   var last = foldl1($Basics.flip($Basics.always));
-   _elm.List.Extra.values = {_op: _op
-                            ,last: last
-                            ,init: init
-                            ,uncons: uncons
-                            ,minimumBy: minimumBy
-                            ,maximumBy: maximumBy
-                            ,andMap: andMap
-                            ,andThen: andThen
-                            ,takeWhile: takeWhile
-                            ,dropWhile: dropWhile
-                            ,dropDuplicates: dropDuplicates
-                            ,replaceIf: replaceIf
-                            ,intercalate: intercalate
-                            ,transpose: transpose
-                            ,subsequences: subsequences
-                            ,permutations: permutations
-                            ,foldl1: foldl1
-                            ,foldr1: foldr1
-                            ,scanl1: scanl1
-                            ,scanr: scanr
-                            ,scanr1: scanr1
-                            ,unfoldr: unfoldr
-                            ,splitAt: splitAt
-                            ,takeWhileEnd: takeWhileEnd
-                            ,dropWhileEnd: dropWhileEnd
-                            ,span: span
-                            ,$break: $break
-                            ,stripPrefix: stripPrefix
-                            ,group: group
-                            ,groupBy: groupBy
-                            ,groupByTransitive: groupByTransitive
-                            ,inits: inits
-                            ,tails: tails
-                            ,select: select
-                            ,selectSplit: selectSplit
-                            ,isPrefixOf: isPrefixOf
-                            ,isSuffixOf: isSuffixOf
-                            ,isInfixOf: isInfixOf
-                            ,isSubsequenceOf: isSubsequenceOf
-                            ,isPermutationOf: isPermutationOf
-                            ,notMember: notMember
-                            ,find: find
-                            ,elemIndex: elemIndex
-                            ,elemIndices: elemIndices
-                            ,findIndex: findIndex
-                            ,findIndices: findIndices
-                            ,zip: zip
-                            ,zip3: zip3
-                            ,zip4: zip4
-                            ,zip5: zip5
-                            ,lift2: lift2
-                            ,lift3: lift3
-                            ,lift4: lift4};
-   return _elm.List.Extra.values;
-};
-Elm.Main = Elm.Main || {};
-Elm.Main.make = function (_elm) {
-   "use strict";
-   _elm.Main = _elm.Main || {};
-   if (_elm.Main.values)
-   return _elm.Main.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "Main",
-   $Basics = Elm.Basics.make(_elm),
-   $Effects = Elm.Effects.make(_elm),
-   $Html = Elm.Html.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $StartApp = Elm.StartApp.make(_elm),
-   $Task = Elm.Task.make(_elm),
-   $Topics$TopicList = Elm.Topics.TopicList.make(_elm);
-   var config = {_: {}
-                ,init: $Topics$TopicList.init
-                ,inputs: _L.fromArray([])
-                ,update: $Topics$TopicList.update
-                ,view: $Topics$TopicList.view};
-   var app = $StartApp.start(config);
-   var main = app.html;
-   var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",
-   app.tasks);
-   _elm.Main.values = {_op: _op
-                      ,app: app
-                      ,config: config
-                      ,main: main};
-   return _elm.Main.values;
 };
 Elm.Maybe = Elm.Maybe || {};
 Elm.Maybe.make = function (_elm) {
@@ -14326,111 +13545,6 @@ Elm.Result.make = function (_elm) {
                         ,Err: Err};
    return _elm.Result.values;
 };
-Elm.Set = Elm.Set || {};
-Elm.Set.make = function (_elm) {
-   "use strict";
-   _elm.Set = _elm.Set || {};
-   if (_elm.Set.values)
-   return _elm.Set.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "Set",
-   $Dict = Elm.Dict.make(_elm),
-   $List = Elm.List.make(_elm);
-   var partition = F2(function (p,
-   set) {
-      return A2($Dict.partition,
-      F2(function (k,_v0) {
-         return function () {
-            return p(k);
-         }();
-      }),
-      set);
-   });
-   var filter = F2(function (p,
-   set) {
-      return A2($Dict.filter,
-      F2(function (k,_v2) {
-         return function () {
-            return p(k);
-         }();
-      }),
-      set);
-   });
-   var foldr = F3(function (f,
-   b,
-   s) {
-      return A3($Dict.foldr,
-      F3(function (k,_v4,b) {
-         return function () {
-            return A2(f,k,b);
-         }();
-      }),
-      b,
-      s);
-   });
-   var foldl = F3(function (f,
-   b,
-   s) {
-      return A3($Dict.foldl,
-      F3(function (k,_v6,b) {
-         return function () {
-            return A2(f,k,b);
-         }();
-      }),
-      b,
-      s);
-   });
-   var toList = $Dict.keys;
-   var diff = $Dict.diff;
-   var intersect = $Dict.intersect;
-   var union = $Dict.union;
-   var member = $Dict.member;
-   var isEmpty = $Dict.isEmpty;
-   var remove = $Dict.remove;
-   var insert = function (k) {
-      return A2($Dict.insert,
-      k,
-      {ctor: "_Tuple0"});
-   };
-   var singleton = function (k) {
-      return A2($Dict.singleton,
-      k,
-      {ctor: "_Tuple0"});
-   };
-   var empty = $Dict.empty;
-   var fromList = function (xs) {
-      return A3($List.foldl,
-      insert,
-      empty,
-      xs);
-   };
-   var map = F2(function (f,s) {
-      return fromList(A2($List.map,
-      f,
-      toList(s)));
-   });
-   _elm.Set.values = {_op: _op
-                     ,empty: empty
-                     ,singleton: singleton
-                     ,insert: insert
-                     ,remove: remove
-                     ,isEmpty: isEmpty
-                     ,member: member
-                     ,foldl: foldl
-                     ,foldr: foldr
-                     ,map: map
-                     ,filter: filter
-                     ,partition: partition
-                     ,union: union
-                     ,intersect: intersect
-                     ,diff: diff
-                     ,toList: toList
-                     ,fromList: fromList};
-   return _elm.Set.values;
-};
 Elm.Signal = Elm.Signal || {};
 Elm.Signal.make = function (_elm) {
    "use strict";
@@ -14764,733 +13878,6 @@ Elm.String.make = function (_elm) {
                         ,any: any
                         ,all: all};
    return _elm.String.values;
-};
-Elm.Svg = Elm.Svg || {};
-Elm.Svg.make = function (_elm) {
-   "use strict";
-   _elm.Svg = _elm.Svg || {};
-   if (_elm.Svg.values)
-   return _elm.Svg.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "Svg",
-   $Basics = Elm.Basics.make(_elm),
-   $Html = Elm.Html.make(_elm),
-   $Json$Encode = Elm.Json.Encode.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $VirtualDom = Elm.VirtualDom.make(_elm);
-   var text = $VirtualDom.text;
-   var svgNamespace = A2($VirtualDom.property,
-   "namespace",
-   $Json$Encode.string("http://www.w3.org/2000/svg"));
-   var node = F3(function (name,
-   attributes,
-   children) {
-      return A3($VirtualDom.node,
-      name,
-      A2($List._op["::"],
-      svgNamespace,
-      attributes),
-      children);
-   });
-   var svg = node("svg");
-   var foreignObject = node("foreignObject");
-   var animate = node("animate");
-   var animateColor = node("animateColor");
-   var animateMotion = node("animateMotion");
-   var animateTransform = node("animateTransform");
-   var mpath = node("mpath");
-   var set = node("set");
-   var a = node("a");
-   var defs = node("defs");
-   var g = node("g");
-   var marker = node("marker");
-   var mask = node("mask");
-   var missingGlyph = node("missingGlyph");
-   var pattern = node("pattern");
-   var $switch = node("switch");
-   var symbol = node("symbol");
-   var desc = node("desc");
-   var metadata = node("metadata");
-   var title = node("title");
-   var feBlend = node("feBlend");
-   var feColorMatrix = node("feColorMatrix");
-   var feComponentTransfer = node("feComponentTransfer");
-   var feComposite = node("feComposite");
-   var feConvolveMatrix = node("feConvolveMatrix");
-   var feDiffuseLighting = node("feDiffuseLighting");
-   var feDisplacementMap = node("feDisplacementMap");
-   var feFlood = node("feFlood");
-   var feFuncA = node("feFuncA");
-   var feFuncB = node("feFuncB");
-   var feFuncG = node("feFuncG");
-   var feFuncR = node("feFuncR");
-   var feGaussianBlur = node("feGaussianBlur");
-   var feImage = node("feImage");
-   var feMerge = node("feMerge");
-   var feMergeNode = node("feMergeNode");
-   var feMorphology = node("feMorphology");
-   var feOffset = node("feOffset");
-   var feSpecularLighting = node("feSpecularLighting");
-   var feTile = node("feTile");
-   var feTurbulence = node("feTurbulence");
-   var font = node("font");
-   var fontFace = node("fontFace");
-   var fontFaceFormat = node("fontFaceFormat");
-   var fontFaceName = node("fontFaceName");
-   var fontFaceSrc = node("fontFaceSrc");
-   var fontFaceUri = node("fontFaceUri");
-   var hkern = node("hkern");
-   var vkern = node("vkern");
-   var linearGradient = node("linearGradient");
-   var radialGradient = node("radialGradient");
-   var stop = node("stop");
-   var circle = node("circle");
-   var ellipse = node("ellipse");
-   var image = node("image");
-   var line = node("line");
-   var path = node("path");
-   var polygon = node("polygon");
-   var polyline = node("polyline");
-   var rect = node("rect");
-   var use = node("use");
-   var feDistantLight = node("feDistantLight");
-   var fePointLight = node("fePointLight");
-   var feSpotLight = node("feSpotLight");
-   var altGlyph = node("altGlyph");
-   var altGlyphDef = node("altGlyphDef");
-   var altGlyphItem = node("altGlyphItem");
-   var glyph = node("glyph");
-   var glyphRef = node("glyphRef");
-   var textPath = node("textPath");
-   var text$ = node("text");
-   var tref = node("tref");
-   var tspan = node("tspan");
-   var clipPath = node("clipPath");
-   var colorProfile = node("colorProfile");
-   var cursor = node("cursor");
-   var filter = node("filter");
-   var script = node("script");
-   var style = node("style");
-   var view = node("view");
-   _elm.Svg.values = {_op: _op
-                     ,text: text
-                     ,node: node
-                     ,svg: svg
-                     ,foreignObject: foreignObject
-                     ,circle: circle
-                     ,ellipse: ellipse
-                     ,image: image
-                     ,line: line
-                     ,path: path
-                     ,polygon: polygon
-                     ,polyline: polyline
-                     ,rect: rect
-                     ,use: use
-                     ,animate: animate
-                     ,animateColor: animateColor
-                     ,animateMotion: animateMotion
-                     ,animateTransform: animateTransform
-                     ,mpath: mpath
-                     ,set: set
-                     ,desc: desc
-                     ,metadata: metadata
-                     ,title: title
-                     ,a: a
-                     ,defs: defs
-                     ,g: g
-                     ,marker: marker
-                     ,mask: mask
-                     ,missingGlyph: missingGlyph
-                     ,pattern: pattern
-                     ,$switch: $switch
-                     ,symbol: symbol
-                     ,altGlyph: altGlyph
-                     ,altGlyphDef: altGlyphDef
-                     ,altGlyphItem: altGlyphItem
-                     ,glyph: glyph
-                     ,glyphRef: glyphRef
-                     ,textPath: textPath
-                     ,text$: text$
-                     ,tref: tref
-                     ,tspan: tspan
-                     ,font: font
-                     ,fontFace: fontFace
-                     ,fontFaceFormat: fontFaceFormat
-                     ,fontFaceName: fontFaceName
-                     ,fontFaceSrc: fontFaceSrc
-                     ,fontFaceUri: fontFaceUri
-                     ,hkern: hkern
-                     ,vkern: vkern
-                     ,linearGradient: linearGradient
-                     ,radialGradient: radialGradient
-                     ,stop: stop
-                     ,feBlend: feBlend
-                     ,feColorMatrix: feColorMatrix
-                     ,feComponentTransfer: feComponentTransfer
-                     ,feComposite: feComposite
-                     ,feConvolveMatrix: feConvolveMatrix
-                     ,feDiffuseLighting: feDiffuseLighting
-                     ,feDisplacementMap: feDisplacementMap
-                     ,feFlood: feFlood
-                     ,feFuncA: feFuncA
-                     ,feFuncB: feFuncB
-                     ,feFuncG: feFuncG
-                     ,feFuncR: feFuncR
-                     ,feGaussianBlur: feGaussianBlur
-                     ,feImage: feImage
-                     ,feMerge: feMerge
-                     ,feMergeNode: feMergeNode
-                     ,feMorphology: feMorphology
-                     ,feOffset: feOffset
-                     ,feSpecularLighting: feSpecularLighting
-                     ,feTile: feTile
-                     ,feTurbulence: feTurbulence
-                     ,feDistantLight: feDistantLight
-                     ,fePointLight: fePointLight
-                     ,feSpotLight: feSpotLight
-                     ,clipPath: clipPath
-                     ,colorProfile: colorProfile
-                     ,cursor: cursor
-                     ,filter: filter
-                     ,script: script
-                     ,style: style
-                     ,view: view};
-   return _elm.Svg.values;
-};
-Elm.Svg = Elm.Svg || {};
-Elm.Svg.Attributes = Elm.Svg.Attributes || {};
-Elm.Svg.Attributes.make = function (_elm) {
-   "use strict";
-   _elm.Svg = _elm.Svg || {};
-   _elm.Svg.Attributes = _elm.Svg.Attributes || {};
-   if (_elm.Svg.Attributes.values)
-   return _elm.Svg.Attributes.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "Svg.Attributes",
-   $Basics = Elm.Basics.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Svg = Elm.Svg.make(_elm),
-   $VirtualDom = Elm.VirtualDom.make(_elm);
-   var writingMode = $VirtualDom.attribute("writing-mode");
-   var wordSpacing = $VirtualDom.attribute("word-spacing");
-   var visibility = $VirtualDom.attribute("visibility");
-   var unicodeBidi = $VirtualDom.attribute("unicode-bidi");
-   var textRendering = $VirtualDom.attribute("text-rendering");
-   var textDecoration = $VirtualDom.attribute("text-decoration");
-   var textAnchor = $VirtualDom.attribute("text-anchor");
-   var stroke = $VirtualDom.attribute("stroke");
-   var strokeWidth = $VirtualDom.attribute("stroke-width");
-   var strokeOpacity = $VirtualDom.attribute("stroke-opacity");
-   var strokeMiterlimit = $VirtualDom.attribute("stroke-miterlimit");
-   var strokeLinejoin = $VirtualDom.attribute("stroke-linejoin");
-   var strokeLinecap = $VirtualDom.attribute("stroke-linecap");
-   var strokeDashoffset = $VirtualDom.attribute("stroke-dashoffset");
-   var strokeDasharray = $VirtualDom.attribute("stroke-dasharray");
-   var stopOpacity = $VirtualDom.attribute("stop-opacity");
-   var stopColor = $VirtualDom.attribute("stop-color");
-   var shapeRendering = $VirtualDom.attribute("shape-rendering");
-   var pointerEvents = $VirtualDom.attribute("pointer-events");
-   var overflow = $VirtualDom.attribute("overflow");
-   var opacity = $VirtualDom.attribute("opacity");
-   var mask = $VirtualDom.attribute("mask");
-   var markerStart = $VirtualDom.attribute("marker-start");
-   var markerMid = $VirtualDom.attribute("marker-mid");
-   var markerEnd = $VirtualDom.attribute("marker-end");
-   var lightingColor = $VirtualDom.attribute("lighting-color");
-   var letterSpacing = $VirtualDom.attribute("letter-spacing");
-   var kerning = $VirtualDom.attribute("kerning");
-   var imageRendering = $VirtualDom.attribute("image-rendering");
-   var glyphOrientationVertical = $VirtualDom.attribute("glyph-orientation-vertical");
-   var glyphOrientationHorizontal = $VirtualDom.attribute("glyph-orientation-horizontal");
-   var fontWeight = $VirtualDom.attribute("font-weight");
-   var fontVariant = $VirtualDom.attribute("font-variant");
-   var fontStyle = $VirtualDom.attribute("font-style");
-   var fontStretch = $VirtualDom.attribute("font-stretch");
-   var fontSize = $VirtualDom.attribute("font-size");
-   var fontSizeAdjust = $VirtualDom.attribute("font-size-adjust");
-   var fontFamily = $VirtualDom.attribute("font-family");
-   var floodOpacity = $VirtualDom.attribute("flood-opacity");
-   var floodColor = $VirtualDom.attribute("flood-color");
-   var filter = $VirtualDom.attribute("filter");
-   var fill = $VirtualDom.attribute("fill");
-   var fillRule = $VirtualDom.attribute("fill-rule");
-   var fillOpacity = $VirtualDom.attribute("fill-opacity");
-   var enableBackground = $VirtualDom.attribute("enable-background");
-   var dominantBaseline = $VirtualDom.attribute("dominant-baseline");
-   var display = $VirtualDom.attribute("display");
-   var direction = $VirtualDom.attribute("direction");
-   var cursor = $VirtualDom.attribute("cursor");
-   var color = $VirtualDom.attribute("color");
-   var colorRendering = $VirtualDom.attribute("color-rendering");
-   var colorProfile = $VirtualDom.attribute("color-profile");
-   var colorInterpolation = $VirtualDom.attribute("color-interpolation");
-   var colorInterpolationFilters = $VirtualDom.attribute("color-interpolation-filters");
-   var clip = $VirtualDom.attribute("clip");
-   var clipRule = $VirtualDom.attribute("clip-rule");
-   var clipPath = $VirtualDom.attribute("clip-path");
-   var baselineShift = $VirtualDom.attribute("baseline-shift");
-   var alignmentBaseline = $VirtualDom.attribute("alignment-baseline");
-   var zoomAndPan = $VirtualDom.attribute("zoomAndPan");
-   var z = $VirtualDom.attribute("z");
-   var yChannelSelector = $VirtualDom.attribute("yChannelSelector");
-   var y2 = $VirtualDom.attribute("y2");
-   var y1 = $VirtualDom.attribute("y1");
-   var y = $VirtualDom.attribute("y");
-   var xmlSpace = $VirtualDom.attribute("xml:space");
-   var xmlLang = $VirtualDom.attribute("xml:lang");
-   var xmlBase = $VirtualDom.attribute("xml:base");
-   var xlinkType = $VirtualDom.attribute("xlink:type");
-   var xlinkTitle = $VirtualDom.attribute("xlink:title");
-   var xlinkShow = $VirtualDom.attribute("xlink:show");
-   var xlinkRole = $VirtualDom.attribute("xlink:role");
-   var xlinkHref = $VirtualDom.attribute("xlink:href");
-   var xlinkArcrole = $VirtualDom.attribute("xlink:arcrole");
-   var xlinkActuate = $VirtualDom.attribute("xlink:actuate");
-   var xChannelSelector = $VirtualDom.attribute("xChannelSelector");
-   var x2 = $VirtualDom.attribute("x2");
-   var x1 = $VirtualDom.attribute("x1");
-   var xHeight = $VirtualDom.attribute("x-height");
-   var x = $VirtualDom.attribute("x");
-   var widths = $VirtualDom.attribute("widths");
-   var width = $VirtualDom.attribute("width");
-   var viewTarget = $VirtualDom.attribute("viewTarget");
-   var viewBox = $VirtualDom.attribute("viewBox");
-   var vertOriginY = $VirtualDom.attribute("vert-origin-y");
-   var vertOriginX = $VirtualDom.attribute("vert-origin-x");
-   var vertAdvY = $VirtualDom.attribute("vert-adv-y");
-   var version = $VirtualDom.attribute("version");
-   var values = $VirtualDom.attribute("values");
-   var vMathematical = $VirtualDom.attribute("v-mathematical");
-   var vIdeographic = $VirtualDom.attribute("v-ideographic");
-   var vHanging = $VirtualDom.attribute("v-hanging");
-   var vAlphabetic = $VirtualDom.attribute("v-alphabetic");
-   var unitsPerEm = $VirtualDom.attribute("units-per-em");
-   var unicodeRange = $VirtualDom.attribute("unicode-range");
-   var unicode = $VirtualDom.attribute("unicode");
-   var underlineThickness = $VirtualDom.attribute("underline-thickness");
-   var underlinePosition = $VirtualDom.attribute("underline-position");
-   var u2 = $VirtualDom.attribute("u2");
-   var u1 = $VirtualDom.attribute("u1");
-   var type$ = $VirtualDom.attribute("type");
-   var transform = $VirtualDom.attribute("transform");
-   var to = $VirtualDom.attribute("to");
-   var title = $VirtualDom.attribute("title");
-   var textLength = $VirtualDom.attribute("textLength");
-   var targetY = $VirtualDom.attribute("targetY");
-   var targetX = $VirtualDom.attribute("targetX");
-   var target = $VirtualDom.attribute("target");
-   var tableValues = $VirtualDom.attribute("tableValues");
-   var systemLanguage = $VirtualDom.attribute("systemLanguage");
-   var surfaceScale = $VirtualDom.attribute("surfaceScale");
-   var style = $VirtualDom.attribute("style");
-   var string = $VirtualDom.attribute("string");
-   var strikethroughThickness = $VirtualDom.attribute("strikethrough-thickness");
-   var strikethroughPosition = $VirtualDom.attribute("strikethrough-position");
-   var stitchTiles = $VirtualDom.attribute("stitchTiles");
-   var stemv = $VirtualDom.attribute("stemv");
-   var stemh = $VirtualDom.attribute("stemh");
-   var stdDeviation = $VirtualDom.attribute("stdDeviation");
-   var startOffset = $VirtualDom.attribute("startOffset");
-   var spreadMethod = $VirtualDom.attribute("spreadMethod");
-   var speed = $VirtualDom.attribute("speed");
-   var specularExponent = $VirtualDom.attribute("specularExponent");
-   var specularConstant = $VirtualDom.attribute("specularConstant");
-   var spacing = $VirtualDom.attribute("spacing");
-   var slope = $VirtualDom.attribute("slope");
-   var seed = $VirtualDom.attribute("seed");
-   var scale = $VirtualDom.attribute("scale");
-   var ry = $VirtualDom.attribute("ry");
-   var rx = $VirtualDom.attribute("rx");
-   var rotate = $VirtualDom.attribute("rotate");
-   var result = $VirtualDom.attribute("result");
-   var restart = $VirtualDom.attribute("restart");
-   var requiredFeatures = $VirtualDom.attribute("requiredFeatures");
-   var requiredExtensions = $VirtualDom.attribute("requiredExtensions");
-   var repeatDur = $VirtualDom.attribute("repeatDur");
-   var repeatCount = $VirtualDom.attribute("repeatCount");
-   var renderingIntent = $VirtualDom.attribute("rendering-intent");
-   var refY = $VirtualDom.attribute("refY");
-   var refX = $VirtualDom.attribute("refX");
-   var radius = $VirtualDom.attribute("radius");
-   var r = $VirtualDom.attribute("r");
-   var primitiveUnits = $VirtualDom.attribute("primitiveUnits");
-   var preserveAspectRatio = $VirtualDom.attribute("preserveAspectRatio");
-   var preserveAlpha = $VirtualDom.attribute("preserveAlpha");
-   var pointsAtZ = $VirtualDom.attribute("pointsAtZ");
-   var pointsAtY = $VirtualDom.attribute("pointsAtY");
-   var pointsAtX = $VirtualDom.attribute("pointsAtX");
-   var points = $VirtualDom.attribute("points");
-   var pointOrder = $VirtualDom.attribute("point-order");
-   var patternUnits = $VirtualDom.attribute("patternUnits");
-   var patternTransform = $VirtualDom.attribute("patternTransform");
-   var patternContentUnits = $VirtualDom.attribute("patternContentUnits");
-   var pathLength = $VirtualDom.attribute("pathLength");
-   var path = $VirtualDom.attribute("path");
-   var panose1 = $VirtualDom.attribute("panose-1");
-   var overlineThickness = $VirtualDom.attribute("overline-thickness");
-   var overlinePosition = $VirtualDom.attribute("overline-position");
-   var origin = $VirtualDom.attribute("origin");
-   var orientation = $VirtualDom.attribute("orientation");
-   var orient = $VirtualDom.attribute("orient");
-   var order = $VirtualDom.attribute("order");
-   var operator = $VirtualDom.attribute("operator");
-   var offset = $VirtualDom.attribute("offset");
-   var numOctaves = $VirtualDom.attribute("numOctaves");
-   var name = $VirtualDom.attribute("name");
-   var mode = $VirtualDom.attribute("mode");
-   var min = $VirtualDom.attribute("min");
-   var method = $VirtualDom.attribute("method");
-   var media = $VirtualDom.attribute("media");
-   var max = $VirtualDom.attribute("max");
-   var mathematical = $VirtualDom.attribute("mathematical");
-   var maskUnits = $VirtualDom.attribute("maskUnits");
-   var maskContentUnits = $VirtualDom.attribute("maskContentUnits");
-   var markerWidth = $VirtualDom.attribute("markerWidth");
-   var markerUnits = $VirtualDom.attribute("markerUnits");
-   var markerHeight = $VirtualDom.attribute("markerHeight");
-   var local = $VirtualDom.attribute("local");
-   var limitingConeAngle = $VirtualDom.attribute("limitingConeAngle");
-   var lengthAdjust = $VirtualDom.attribute("lengthAdjust");
-   var lang = $VirtualDom.attribute("lang");
-   var keyTimes = $VirtualDom.attribute("keyTimes");
-   var keySplines = $VirtualDom.attribute("keySplines");
-   var keyPoints = $VirtualDom.attribute("keyPoints");
-   var kernelUnitLength = $VirtualDom.attribute("kernelUnitLength");
-   var kernelMatrix = $VirtualDom.attribute("kernelMatrix");
-   var k4 = $VirtualDom.attribute("k4");
-   var k3 = $VirtualDom.attribute("k3");
-   var k2 = $VirtualDom.attribute("k2");
-   var k1 = $VirtualDom.attribute("k1");
-   var k = $VirtualDom.attribute("k");
-   var intercept = $VirtualDom.attribute("intercept");
-   var in2 = $VirtualDom.attribute("in2");
-   var in$ = $VirtualDom.attribute("in");
-   var ideographic = $VirtualDom.attribute("ideographic");
-   var id = $VirtualDom.attribute("id");
-   var horizOriginY = $VirtualDom.attribute("horiz-origin-y");
-   var horizOriginX = $VirtualDom.attribute("horiz-origin-x");
-   var horizAdvX = $VirtualDom.attribute("horiz-adv-x");
-   var height = $VirtualDom.attribute("height");
-   var hanging = $VirtualDom.attribute("hanging");
-   var gradientUnits = $VirtualDom.attribute("gradientUnits");
-   var gradientTransform = $VirtualDom.attribute("gradientTransform");
-   var glyphRef = $VirtualDom.attribute("glyphRef");
-   var glyphName = $VirtualDom.attribute("glyph-name");
-   var g2 = $VirtualDom.attribute("g2");
-   var g1 = $VirtualDom.attribute("g1");
-   var fy = $VirtualDom.attribute("fy");
-   var fx = $VirtualDom.attribute("fx");
-   var from = $VirtualDom.attribute("from");
-   var format = $VirtualDom.attribute("format");
-   var filterUnits = $VirtualDom.attribute("filterUnits");
-   var filterRes = $VirtualDom.attribute("filterRes");
-   var externalResourcesRequired = $VirtualDom.attribute("externalResourcesRequired");
-   var exponent = $VirtualDom.attribute("exponent");
-   var end = $VirtualDom.attribute("end");
-   var elevation = $VirtualDom.attribute("elevation");
-   var edgeMode = $VirtualDom.attribute("edgeMode");
-   var dy = $VirtualDom.attribute("dy");
-   var dx = $VirtualDom.attribute("dx");
-   var dur = $VirtualDom.attribute("dur");
-   var divisor = $VirtualDom.attribute("divisor");
-   var diffuseConstant = $VirtualDom.attribute("diffuseConstant");
-   var descent = $VirtualDom.attribute("descent");
-   var decelerate = $VirtualDom.attribute("decelerate");
-   var d = $VirtualDom.attribute("d");
-   var cy = $VirtualDom.attribute("cy");
-   var cx = $VirtualDom.attribute("cx");
-   var contentStyleType = $VirtualDom.attribute("contentStyleType");
-   var contentScriptType = $VirtualDom.attribute("contentScriptType");
-   var clipPathUnits = $VirtualDom.attribute("clipPathUnits");
-   var $class = $VirtualDom.attribute("class");
-   var capHeight = $VirtualDom.attribute("cap-height");
-   var calcMode = $VirtualDom.attribute("calcMode");
-   var by = $VirtualDom.attribute("by");
-   var bias = $VirtualDom.attribute("bias");
-   var begin = $VirtualDom.attribute("begin");
-   var bbox = $VirtualDom.attribute("bbox");
-   var baseProfile = $VirtualDom.attribute("baseProfile");
-   var baseFrequency = $VirtualDom.attribute("baseFrequency");
-   var azimuth = $VirtualDom.attribute("azimuth");
-   var autoReverse = $VirtualDom.attribute("autoReverse");
-   var attributeType = $VirtualDom.attribute("attributeType");
-   var attributeName = $VirtualDom.attribute("attributeName");
-   var ascent = $VirtualDom.attribute("ascent");
-   var arabicForm = $VirtualDom.attribute("arabic-form");
-   var amplitude = $VirtualDom.attribute("amplitude");
-   var allowReorder = $VirtualDom.attribute("allowReorder");
-   var alphabetic = $VirtualDom.attribute("alphabetic");
-   var additive = $VirtualDom.attribute("additive");
-   var accumulate = $VirtualDom.attribute("accumulate");
-   var accelerate = $VirtualDom.attribute("accelerate");
-   var accentHeight = $VirtualDom.attribute("accent-height");
-   _elm.Svg.Attributes.values = {_op: _op
-                                ,accentHeight: accentHeight
-                                ,accelerate: accelerate
-                                ,accumulate: accumulate
-                                ,additive: additive
-                                ,alphabetic: alphabetic
-                                ,allowReorder: allowReorder
-                                ,amplitude: amplitude
-                                ,arabicForm: arabicForm
-                                ,ascent: ascent
-                                ,attributeName: attributeName
-                                ,attributeType: attributeType
-                                ,autoReverse: autoReverse
-                                ,azimuth: azimuth
-                                ,baseFrequency: baseFrequency
-                                ,baseProfile: baseProfile
-                                ,bbox: bbox
-                                ,begin: begin
-                                ,bias: bias
-                                ,by: by
-                                ,calcMode: calcMode
-                                ,capHeight: capHeight
-                                ,$class: $class
-                                ,clipPathUnits: clipPathUnits
-                                ,contentScriptType: contentScriptType
-                                ,contentStyleType: contentStyleType
-                                ,cx: cx
-                                ,cy: cy
-                                ,d: d
-                                ,decelerate: decelerate
-                                ,descent: descent
-                                ,diffuseConstant: diffuseConstant
-                                ,divisor: divisor
-                                ,dur: dur
-                                ,dx: dx
-                                ,dy: dy
-                                ,edgeMode: edgeMode
-                                ,elevation: elevation
-                                ,end: end
-                                ,exponent: exponent
-                                ,externalResourcesRequired: externalResourcesRequired
-                                ,filterRes: filterRes
-                                ,filterUnits: filterUnits
-                                ,format: format
-                                ,from: from
-                                ,fx: fx
-                                ,fy: fy
-                                ,g1: g1
-                                ,g2: g2
-                                ,glyphName: glyphName
-                                ,glyphRef: glyphRef
-                                ,gradientTransform: gradientTransform
-                                ,gradientUnits: gradientUnits
-                                ,hanging: hanging
-                                ,height: height
-                                ,horizAdvX: horizAdvX
-                                ,horizOriginX: horizOriginX
-                                ,horizOriginY: horizOriginY
-                                ,id: id
-                                ,ideographic: ideographic
-                                ,in$: in$
-                                ,in2: in2
-                                ,intercept: intercept
-                                ,k: k
-                                ,k1: k1
-                                ,k2: k2
-                                ,k3: k3
-                                ,k4: k4
-                                ,kernelMatrix: kernelMatrix
-                                ,kernelUnitLength: kernelUnitLength
-                                ,keyPoints: keyPoints
-                                ,keySplines: keySplines
-                                ,keyTimes: keyTimes
-                                ,lang: lang
-                                ,lengthAdjust: lengthAdjust
-                                ,limitingConeAngle: limitingConeAngle
-                                ,local: local
-                                ,markerHeight: markerHeight
-                                ,markerUnits: markerUnits
-                                ,markerWidth: markerWidth
-                                ,maskContentUnits: maskContentUnits
-                                ,maskUnits: maskUnits
-                                ,mathematical: mathematical
-                                ,max: max
-                                ,media: media
-                                ,method: method
-                                ,min: min
-                                ,mode: mode
-                                ,name: name
-                                ,numOctaves: numOctaves
-                                ,offset: offset
-                                ,operator: operator
-                                ,order: order
-                                ,orient: orient
-                                ,orientation: orientation
-                                ,origin: origin
-                                ,overlinePosition: overlinePosition
-                                ,overlineThickness: overlineThickness
-                                ,panose1: panose1
-                                ,path: path
-                                ,pathLength: pathLength
-                                ,patternContentUnits: patternContentUnits
-                                ,patternTransform: patternTransform
-                                ,patternUnits: patternUnits
-                                ,pointOrder: pointOrder
-                                ,points: points
-                                ,pointsAtX: pointsAtX
-                                ,pointsAtY: pointsAtY
-                                ,pointsAtZ: pointsAtZ
-                                ,preserveAlpha: preserveAlpha
-                                ,preserveAspectRatio: preserveAspectRatio
-                                ,primitiveUnits: primitiveUnits
-                                ,r: r
-                                ,radius: radius
-                                ,refX: refX
-                                ,refY: refY
-                                ,renderingIntent: renderingIntent
-                                ,repeatCount: repeatCount
-                                ,repeatDur: repeatDur
-                                ,requiredExtensions: requiredExtensions
-                                ,requiredFeatures: requiredFeatures
-                                ,restart: restart
-                                ,result: result
-                                ,rotate: rotate
-                                ,rx: rx
-                                ,ry: ry
-                                ,scale: scale
-                                ,seed: seed
-                                ,slope: slope
-                                ,spacing: spacing
-                                ,specularConstant: specularConstant
-                                ,specularExponent: specularExponent
-                                ,speed: speed
-                                ,spreadMethod: spreadMethod
-                                ,startOffset: startOffset
-                                ,stdDeviation: stdDeviation
-                                ,stemh: stemh
-                                ,stemv: stemv
-                                ,stitchTiles: stitchTiles
-                                ,strikethroughPosition: strikethroughPosition
-                                ,strikethroughThickness: strikethroughThickness
-                                ,string: string
-                                ,style: style
-                                ,surfaceScale: surfaceScale
-                                ,systemLanguage: systemLanguage
-                                ,tableValues: tableValues
-                                ,target: target
-                                ,targetX: targetX
-                                ,targetY: targetY
-                                ,textLength: textLength
-                                ,title: title
-                                ,to: to
-                                ,transform: transform
-                                ,type$: type$
-                                ,u1: u1
-                                ,u2: u2
-                                ,underlinePosition: underlinePosition
-                                ,underlineThickness: underlineThickness
-                                ,unicode: unicode
-                                ,unicodeRange: unicodeRange
-                                ,unitsPerEm: unitsPerEm
-                                ,vAlphabetic: vAlphabetic
-                                ,vHanging: vHanging
-                                ,vIdeographic: vIdeographic
-                                ,vMathematical: vMathematical
-                                ,values: values
-                                ,version: version
-                                ,vertAdvY: vertAdvY
-                                ,vertOriginX: vertOriginX
-                                ,vertOriginY: vertOriginY
-                                ,viewBox: viewBox
-                                ,viewTarget: viewTarget
-                                ,width: width
-                                ,widths: widths
-                                ,x: x
-                                ,xHeight: xHeight
-                                ,x1: x1
-                                ,x2: x2
-                                ,xChannelSelector: xChannelSelector
-                                ,xlinkActuate: xlinkActuate
-                                ,xlinkArcrole: xlinkArcrole
-                                ,xlinkHref: xlinkHref
-                                ,xlinkRole: xlinkRole
-                                ,xlinkShow: xlinkShow
-                                ,xlinkTitle: xlinkTitle
-                                ,xlinkType: xlinkType
-                                ,xmlBase: xmlBase
-                                ,xmlLang: xmlLang
-                                ,xmlSpace: xmlSpace
-                                ,y: y
-                                ,y1: y1
-                                ,y2: y2
-                                ,yChannelSelector: yChannelSelector
-                                ,z: z
-                                ,zoomAndPan: zoomAndPan
-                                ,alignmentBaseline: alignmentBaseline
-                                ,baselineShift: baselineShift
-                                ,clipPath: clipPath
-                                ,clipRule: clipRule
-                                ,clip: clip
-                                ,colorInterpolationFilters: colorInterpolationFilters
-                                ,colorInterpolation: colorInterpolation
-                                ,colorProfile: colorProfile
-                                ,colorRendering: colorRendering
-                                ,color: color
-                                ,cursor: cursor
-                                ,direction: direction
-                                ,display: display
-                                ,dominantBaseline: dominantBaseline
-                                ,enableBackground: enableBackground
-                                ,fillOpacity: fillOpacity
-                                ,fillRule: fillRule
-                                ,fill: fill
-                                ,filter: filter
-                                ,floodColor: floodColor
-                                ,floodOpacity: floodOpacity
-                                ,fontFamily: fontFamily
-                                ,fontSizeAdjust: fontSizeAdjust
-                                ,fontSize: fontSize
-                                ,fontStretch: fontStretch
-                                ,fontStyle: fontStyle
-                                ,fontVariant: fontVariant
-                                ,fontWeight: fontWeight
-                                ,glyphOrientationHorizontal: glyphOrientationHorizontal
-                                ,glyphOrientationVertical: glyphOrientationVertical
-                                ,imageRendering: imageRendering
-                                ,kerning: kerning
-                                ,letterSpacing: letterSpacing
-                                ,lightingColor: lightingColor
-                                ,markerEnd: markerEnd
-                                ,markerMid: markerMid
-                                ,markerStart: markerStart
-                                ,mask: mask
-                                ,opacity: opacity
-                                ,overflow: overflow
-                                ,pointerEvents: pointerEvents
-                                ,shapeRendering: shapeRendering
-                                ,stopColor: stopColor
-                                ,stopOpacity: stopOpacity
-                                ,strokeDasharray: strokeDasharray
-                                ,strokeDashoffset: strokeDashoffset
-                                ,strokeLinecap: strokeLinecap
-                                ,strokeLinejoin: strokeLinejoin
-                                ,strokeMiterlimit: strokeMiterlimit
-                                ,strokeOpacity: strokeOpacity
-                                ,strokeWidth: strokeWidth
-                                ,stroke: stroke
-                                ,textAnchor: textAnchor
-                                ,textDecoration: textDecoration
-                                ,textRendering: textRendering
-                                ,unicodeBidi: unicodeBidi
-                                ,visibility: visibility
-                                ,wordSpacing: wordSpacing
-                                ,writingMode: writingMode};
-   return _elm.Svg.Attributes.values;
 };
 Elm.Task = Elm.Task || {};
 Elm.Task.make = function (_elm) {
@@ -15881,504 +14268,6 @@ Elm.Time.make = function (_elm) {
                       ,delay: delay
                       ,since: since};
    return _elm.Time.values;
-};
-Elm.Topics = Elm.Topics || {};
-Elm.Topics.TopicList = Elm.Topics.TopicList || {};
-Elm.Topics.TopicList.make = function (_elm) {
-   "use strict";
-   _elm.Topics = _elm.Topics || {};
-   _elm.Topics.TopicList = _elm.Topics.TopicList || {};
-   if (_elm.Topics.TopicList.values)
-   return _elm.Topics.TopicList.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "Topics.TopicList",
-   $Animation = Elm.Animation.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Effects = Elm.Effects.make(_elm),
-   $Html = Elm.Html.make(_elm),
-   $Html$Attributes = Elm.Html.Attributes.make(_elm),
-   $Html$Events = Elm.Html.Events.make(_elm),
-   $List = Elm.List.make(_elm),
-   $List$Extra = Elm.List.Extra.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Svg = Elm.Svg.make(_elm),
-   $Svg$Attributes = Elm.Svg.Attributes.make(_elm),
-   $Time = Elm.Time.make(_elm),
-   $Topics$TopicRow = Elm.Topics.TopicRow.make(_elm),
-   $Topics$Types = Elm.Topics.Types.make(_elm);
-   var clickable = _L.fromArray([{ctor: "_Tuple2"
-                                 ,_0: "cursor"
-                                 ,_1: "pointer"}]);
-   var termIndex = F2(function (sorted,
-   term) {
-      return $Maybe.withDefault(-1)(A2($List$Extra.findIndex,
-      function (t) {
-         return _U.eq(t,term);
-      },
-      sorted));
-   });
-   var rowModel = F4(function (pct,
-   oldIndex,
-   index,
-   term) {
-      return {_: {}
-             ,index: index
-             ,term: term
-             ,transition: pct * $Topics$TopicRow.indexY(oldIndex - index)};
-   });
-   var setOldIndex = F2(function (ix,
-   termIndex) {
-      return _U.replace([["oldIndex"
-                         ,ix]],
-      termIndex);
-   });
-   var emptyIndex = F2(function (index,
-   term) {
-      return {_: {}
-             ,index: index
-             ,oldIndex: 0
-             ,term: term};
-   });
-   var TermIndex = F3(function (a,
-   b,
-   c) {
-      return {_: {}
-             ,index: b
-             ,oldIndex: c
-             ,term: a};
-   });
-   var sortTerms = function (s) {
-      return function () {
-         switch (s.ctor)
-         {case "SortAZ":
-            return function (_) {
-                 return _.name;
-              };
-            case "SortScore":
-            return function ($) {
-                 return $Basics.toString(function (_) {
-                    return _.topicFrequency;
-                 }($));
-              };}
-         _U.badCase($moduleName,
-         "between lines 117 and 119");
-      }();
-   };
-   var sortIndexes = F2(function (sort,
-   terms) {
-      return function () {
-         var sorted = A2($List.sortBy,
-         sortTerms(sort),
-         terms);
-         var indexes = A2($List.map,
-         termIndex(sorted),
-         terms);
-         return indexes;
-      }();
-   });
-   var rowModels = F4(function (trans,
-   oldSort,
-   newSort,
-   terms) {
-      return function () {
-         var oldIxs = A2(sortIndexes,
-         oldSort,
-         terms);
-         var newIxs = A2(sortIndexes,
-         newSort,
-         terms);
-         return A4($List.map3,
-         rowModel(trans.value),
-         oldIxs,
-         newIxs,
-         terms);
-      }();
-   });
-   var animateIndex = function (time) {
-      return $Animation.duration($Time.second / 2)($Animation.to(0)($Animation.from(1)($Animation.animation(time))));
-   };
-   var Tick = function (a) {
-      return {ctor: "Tick",_0: a};
-   };
-   var ChangeSort = function (a) {
-      return {ctor: "ChangeSort"
-             ,_0: a};
-   };
-   var RowAction = function (a) {
-      return {ctor: "RowAction"
-             ,_0: a};
-   };
-   var row = F2(function (address,
-   model) {
-      return A2($Topics$TopicRow.view,
-      A2($Signal.forwardTo,
-      address,
-      RowAction),
-      model);
-   });
-   var SortScore = {ctor: "SortScore"};
-   var SortAZ = {ctor: "SortAZ"};
-   var view = F2(function (address,
-   model) {
-      return function () {
-         var models = A4(rowModels,
-         model.transition,
-         model.oldSort,
-         model.sort,
-         model.terms);
-         return A2($Html.div,
-         _L.fromArray([]),
-         _L.fromArray([A2($Html.h1,
-                      _L.fromArray([]),
-                      _L.fromArray([$Html.text("topics")]))
-                      ,A2($Html.div,
-                      _L.fromArray([]),
-                      _L.fromArray([A2($Html.a,
-                                   _L.fromArray([$Html$Attributes.style(clickable)
-                                                ,A2($Html$Events.onClick,
-                                                address,
-                                                ChangeSort(SortAZ))]),
-                                   _L.fromArray([$Html.text("Sort A-Z")]))
-                                   ,$Html.text(" | ")
-                                   ,A2($Html.a,
-                                   _L.fromArray([$Html$Attributes.style(clickable)
-                                                ,A2($Html$Events.onClick,
-                                                address,
-                                                ChangeSort(SortScore))]),
-                                   _L.fromArray([$Html.text("Sort Score")]))]))
-                      ,A2($Svg.svg,
-                      _L.fromArray([$Svg$Attributes.width("400")
-                                   ,$Svg$Attributes.height("500")
-                                   ,$Svg$Attributes.viewBox("0 0 400 400")]),
-                      A2($List.map,
-                      row(address),
-                      models))]));
-      }();
-   });
-   var currentValue = F2(function (trans,
-   time) {
-      return function () {
-         var _v1 = trans.animation;
-         switch (_v1.ctor)
-         {case "Just":
-            return A2($Animation.animate,
-              time,
-              _v1._0);
-            case "Nothing":
-            return trans.value;}
-         _U.badCase($moduleName,
-         "between lines 51 and 53");
-      }();
-   });
-   var updateTrans = F2(function (trans,
-   time) {
-      return _U.replace([["value"
-                         ,A2(currentValue,trans,time)]],
-      trans);
-   });
-   var Transition = F2(function (a,
-   b) {
-      return {_: {}
-             ,animation: a
-             ,value: b};
-   });
-   var start = A2(Transition,
-   $Maybe.Nothing,
-   1);
-   var stop = A2(Transition,
-   $Maybe.Nothing,
-   0);
-   var emptyModel = {_: {}
-                    ,oldSort: SortScore
-                    ,sort: SortScore
-                    ,terms: _L.fromArray([A3($Topics$Types.TopicTerm,
-                                         "one",
-                                         0.1,
-                                         1)
-                                         ,A3($Topics$Types.TopicTerm,
-                                         "two",
-                                         0.2,
-                                         1)
-                                         ,A3($Topics$Types.TopicTerm,
-                                         "three",
-                                         0.3,
-                                         1)
-                                         ,A3($Topics$Types.TopicTerm,
-                                         "four",
-                                         0.4,
-                                         1)
-                                         ,A3($Topics$Types.TopicTerm,
-                                         "five",
-                                         0.5,
-                                         1)
-                                         ,A3($Topics$Types.TopicTerm,
-                                         "six",
-                                         0.6,
-                                         1)
-                                         ,A3($Topics$Types.TopicTerm,
-                                         "seven",
-                                         0.7,
-                                         1)
-                                         ,A3($Topics$Types.TopicTerm,
-                                         "eight",
-                                         0.8,
-                                         1)
-                                         ,A3($Topics$Types.TopicTerm,
-                                         "nine",
-                                         0.9,
-                                         1)
-                                         ,A3($Topics$Types.TopicTerm,
-                                         "ten",
-                                         1,
-                                         1)])
-                    ,transition: stop};
-   var init = {ctor: "_Tuple2"
-              ,_0: emptyModel
-              ,_1: $Effects.none};
-   var update = F2(function (action,
-   model) {
-      return function () {
-         switch (action.ctor)
-         {case "ChangeSort":
-            return _U.eq(action._0,
-              model.sort) ? {ctor: "_Tuple2"
-                            ,_0: model
-                            ,_1: $Effects.none} : {ctor: "_Tuple2"
-                                                  ,_0: _U.replace([["sort"
-                                                                   ,action._0]
-                                                                  ,["oldSort"
-                                                                   ,model.sort]
-                                                                  ,["transition"
-                                                                   ,start]],
-                                                  model)
-                                                  ,_1: $Effects.tick(Tick)};
-            case "RowAction":
-            return {ctor: "_Tuple2"
-                   ,_0: model
-                   ,_1: $Effects.none};
-            case "Tick":
-            return function () {
-                 var trans = model.transition;
-                 return function () {
-                    var _v7 = trans.animation;
-                    switch (_v7.ctor)
-                    {case "Just":
-                       return _U.cmp(trans.value,
-                         0) < 1 ? {ctor: "_Tuple2"
-                                  ,_0: _U.replace([["transition"
-                                                   ,stop]],
-                                  model)
-                                  ,_1: $Effects.none} : {ctor: "_Tuple2"
-                                                        ,_0: _U.replace([["transition"
-                                                                         ,A2(updateTrans,
-                                                                         trans,
-                                                                         action._0)]],
-                                                        model)
-                                                        ,_1: $Effects.tick(Tick)};
-                       case "Nothing":
-                       return function () {
-                            var anim = animateIndex(action._0);
-                            var trans$ = A2(Transition,
-                            $Maybe.Just(anim),
-                            1);
-                            return {ctor: "_Tuple2"
-                                   ,_0: _U.replace([["transition"
-                                                    ,A2(updateTrans,
-                                                    trans$,
-                                                    action._0)]],
-                                   model)
-                                   ,_1: $Effects.tick(Tick)};
-                         }();}
-                    _U.badCase($moduleName,
-                    "between lines 86 and 104");
-                 }();
-              }();}
-         _U.badCase($moduleName,
-         "between lines 66 and 104");
-      }();
-   });
-   var Model = F4(function (a,
-   b,
-   c,
-   d) {
-      return {_: {}
-             ,oldSort: c
-             ,sort: b
-             ,terms: a
-             ,transition: d};
-   });
-   _elm.Topics.TopicList.values = {_op: _op
-                                  ,Model: Model
-                                  ,Transition: Transition
-                                  ,start: start
-                                  ,stop: stop
-                                  ,currentValue: currentValue
-                                  ,updateTrans: updateTrans
-                                  ,SortAZ: SortAZ
-                                  ,SortScore: SortScore
-                                  ,RowAction: RowAction
-                                  ,ChangeSort: ChangeSort
-                                  ,Tick: Tick
-                                  ,update: update
-                                  ,animateIndex: animateIndex
-                                  ,init: init
-                                  ,sortTerms: sortTerms
-                                  ,emptyModel: emptyModel
-                                  ,TermIndex: TermIndex
-                                  ,emptyIndex: emptyIndex
-                                  ,setOldIndex: setOldIndex
-                                  ,rowModel: rowModel
-                                  ,rowModels: rowModels
-                                  ,termIndex: termIndex
-                                  ,sortIndexes: sortIndexes
-                                  ,view: view
-                                  ,row: row
-                                  ,clickable: clickable};
-   return _elm.Topics.TopicList.values;
-};
-Elm.Topics = Elm.Topics || {};
-Elm.Topics.TopicRow = Elm.Topics.TopicRow || {};
-Elm.Topics.TopicRow.make = function (_elm) {
-   "use strict";
-   _elm.Topics = _elm.Topics || {};
-   _elm.Topics.TopicRow = _elm.Topics.TopicRow || {};
-   if (_elm.Topics.TopicRow.values)
-   return _elm.Topics.TopicRow.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "Topics.TopicRow",
-   $Basics = Elm.Basics.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Svg = Elm.Svg.make(_elm),
-   $Svg$Attributes = Elm.Svg.Attributes.make(_elm),
-   $Topics$Types = Elm.Topics.Types.make(_elm);
-   var translate = F2(function (x,
-   y) {
-      return A2($Basics._op["++"],
-      "translate(",
-      A2($Basics._op["++"],
-      $Basics.toString(x),
-      A2($Basics._op["++"],
-      ",",
-      A2($Basics._op["++"],
-      $Basics.toString(y),
-      ")"))));
-   });
-   var update = F2(function (_v0,
-   model) {
-      return function () {
-         return model;
-      }();
-   });
-   var Model = F3(function (a,
-   b,
-   c) {
-      return {_: {}
-             ,index: b
-             ,term: a
-             ,transition: c};
-   });
-   var Noop = {ctor: "Noop"};
-   var rowHeight = 25;
-   var bar = function (_v2) {
-      return function () {
-         return function () {
-            var max = 200;
-            var overallWidth = _v2.overallFrequency * max;
-            var topicWidth = _v2.topicFrequency * max;
-            return A2($Svg.g,
-            _L.fromArray([$Svg$Attributes.transform(A2(translate,
-            10,
-            0))]),
-            _L.fromArray([A2($Svg.rect,
-                         _L.fromArray([$Svg$Attributes.width($Basics.toString(overallWidth))
-                                      ,$Svg$Attributes.height($Basics.toString(rowHeight - 6))
-                                      ,$Svg$Attributes.fill("#A5C8E1")
-                                      ,$Svg$Attributes.stroke("#85A8D1")]),
-                         _L.fromArray([]))
-                         ,A2($Svg.rect,
-                         _L.fromArray([$Svg$Attributes.width($Basics.toString(topicWidth))
-                                      ,$Svg$Attributes.height($Basics.toString(rowHeight - 6))
-                                      ,$Svg$Attributes.fill("#CC474D")
-                                      ,$Svg$Attributes.stroke("#CC474D")]),
-                         _L.fromArray([]))]));
-         }();
-      }();
-   };
-   var indexY = function (index) {
-      return $Basics.toFloat(index * rowHeight);
-   };
-   var view = F2(function (address,
-   _v4) {
-      return function () {
-         return function () {
-            var x$ = 100;
-            var y$ = indexY(_v4.index) + _v4.transition;
-            return A2($Svg.g,
-            _L.fromArray([$Svg$Attributes.transform(A2(translate,
-            x$,
-            y$))]),
-            _L.fromArray([A2($Svg.g,
-                         _L.fromArray([]),
-                         _L.fromArray([bar(_v4.term)]))
-                         ,A2($Svg.text$,
-                         _L.fromArray([$Svg$Attributes.textAnchor("end")
-                                      ,$Svg$Attributes.x("0")
-                                      ,$Svg$Attributes.y($Basics.toString($Basics.toFloat(rowHeight) / 2.0 + 2.0))]),
-                         _L.fromArray([$Svg.text(_v4.term.name)]))]));
-         }();
-      }();
-   });
-   _elm.Topics.TopicRow.values = {_op: _op
-                                 ,rowHeight: rowHeight
-                                 ,Noop: Noop
-                                 ,Model: Model
-                                 ,update: update
-                                 ,view: view
-                                 ,bar: bar
-                                 ,indexY: indexY
-                                 ,translate: translate};
-   return _elm.Topics.TopicRow.values;
-};
-Elm.Topics = Elm.Topics || {};
-Elm.Topics.Types = Elm.Topics.Types || {};
-Elm.Topics.Types.make = function (_elm) {
-   "use strict";
-   _elm.Topics = _elm.Topics || {};
-   _elm.Topics.Types = _elm.Topics.Types || {};
-   if (_elm.Topics.Types.values)
-   return _elm.Topics.Types.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "Topics.Types",
-   $Basics = Elm.Basics.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var TopicTerm = F3(function (a,
-   b,
-   c) {
-      return {_: {}
-             ,name: a
-             ,overallFrequency: c
-             ,topicFrequency: b};
-   });
-   _elm.Topics.Types.values = {_op: _op
-                              ,TopicTerm: TopicTerm};
-   return _elm.Topics.Types.values;
 };
 Elm.Transform2D = Elm.Transform2D || {};
 Elm.Transform2D.make = function (_elm) {
