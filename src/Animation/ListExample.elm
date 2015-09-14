@@ -53,6 +53,7 @@ update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
     Sort order ->
+      if order == model.sort then (model, Effects.none) else
       -- for each one:
       -- get the new position
       -- animate to that new position
