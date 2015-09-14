@@ -5,50 +5,13 @@ import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
 import StartApp as StartApp
 import Signal exposing (Address)
-import Animation exposing (animation, from, to, duration, delay, Animation, static, animate)
+import Animation exposing (Animation, duration, retarget, static, animate)
 import Time exposing (Time, second)
 import Effects exposing (Effects, Never)
 import Task exposing (Task)
 import List
 import String
 import Debug
-
---------------------------------------------------------------------
-
-type alias Transition =
-  { animations : List Animation
-  , time : Time
-  }
-
-none = { animations = [], time = 0 }
-
-add : Animation -> Transition -> Transition
-add a trans = { trans | animations <- a :: trans.animations }
-
-tick : Time -> Transition -> Transition
-tick time trans =
-  let anims = List.filter (not << Animation.isDone time) trans.animations
-  in { trans | animations <- anims
-             , time <- time
-     }
-
-value : Transition -> Float
-value trans =
-  List.sum <| List.map (animate trans.time) trans.animations
-
-dump : Transition -> String
-dump trans =
-  String.join "\n"
-    [ "time: " ++ toString (round (trans.time / 1000))
-    , "num: " ++ toString (List.length trans.animations)
-    , toString <| List.map (animate trans.time) trans.animations
-    ]
-
-anim : Time -> Float -> Animation
-anim t s =
-  animation t |> from s |> to 0 |> duration (0.8 * second)
-
---------------------------------------------------------------------
 
 type PageState = Open | Closed
 type SortOrder = SortName | SortId
@@ -58,17 +21,27 @@ type alias Item =
   , name : String
   }
 
+type alias ItemModel =
+  { item : Item
+  , animation : Animation
+  }
+
 type alias Model =
   { sort : SortOrder
   , items : List ItemModel
+  , time : Time
   }
 
 init : ( Model, Effects Action )
 init =
   ( { sort = SortId
     , items = List.indexedMap itemModel [Item 1 "one", Item 2 "two", Item 3 "three", Item 4 "four", Item 5 "five", Item 6 "six"]
+    , time = 0
     }
   , Effects.tick Tick )
+
+itemModel : Int -> Item -> ItemModel
+itemModel pos item = { item = item, animation = static (toFloat pos)}
 
 -----------------------------------------------------------------------
 
@@ -82,17 +55,16 @@ update action model =
     Sort order ->
       -- for each one:
       -- get the new position
-      let items = List.indexedMap updatePosition <| sortItems order model.items
+      -- animate to that new position
+      let items = List.indexedMap (updatePosition model.time) <| sortItems order model.items
       in
       ( { model | sort <- order, items <- items }
       , Effects.none )
 
-    Tick t ->
-      let items = List.map (updateItem (ItemTick t)) model.items in
-      ( { model | items <- items }
+    Tick t -> -- note that t is the time the program has been running, not the delta since the last tick
+      ( { model | time <- t }
       , Effects.tick Tick )
 
------------------------------------------------------------------------------
 
 sortItems : SortOrder -> List ItemModel -> List ItemModel
 sortItems order items =
@@ -100,62 +72,20 @@ sortItems order items =
     SortName -> List.sortBy (.name << .item) items
     SortId -> List.sortBy (.id << .item) items
 
-view : Address Action -> Model -> Html
-view address model =
-  div [ style [("margin", "10px")] ]
-    [ div [ style [("margin-bottom", "10px")] ]
-        [ button
-            [ style (buttonStyle (model.sort == SortName))
-            , onClick address (Sort SortName) ]
-            [ text "Sort Name" ]
-        , button
-            [ style (buttonStyle (model.sort == SortId))
-            , onClick address (Sort SortId) ]
-            [ text "Sort Id" ]
-        ]
-    -- , div
-        -- []
-        -- (List.map (\model -> pre [] [ text (dump model.transition) ]) model.items)
-    , div
-        [ style [("position", "relative")] ]
-        (List.map (itemView address) model.items)
-    ]
-
-
--------------------------------------------------------
-
--- you can't generate these on the fly, you have to save / store them
-type alias ItemModel =
-  { item : Item
-  , transition : Transition
-  , position : Int
-  }
-
-itemModel : Int -> Item -> ItemModel
-itemModel pos item = { item = item, position = pos, transition = none }
-
-updatePosition : Int -> ItemModel -> ItemModel
-updatePosition pos model =
-  let dy = itemY model.position - itemY pos in
+updatePosition : Time -> Int -> ItemModel -> ItemModel
+updatePosition time pos model =
   { model
-    | position <- pos
-    , transition <- add (anim model.transition.time dy) model.transition
+    | animation <- retarget time (toFloat pos) model.animation |> duration (0.8*second)
   }
 
-type ItemAction = ItemTick Time
+-----------------------------------------------------------------------------
 
-updateItem : ItemAction -> ItemModel -> ItemModel
-updateItem action model =
-  case action of
-    ItemTick time ->
-      { model | transition <- tick time model.transition }
+itemY : Float -> Float
+itemY pos = pos * 50.0
 
-itemY : Int -> Float
-itemY pos = toFloat pos * 50.0
-
-itemView : Address Action -> ItemModel -> Html
-itemView address model =
-  let y = itemY model.position + value model.transition in
+itemView : Address Action -> Time -> ItemModel -> Html
+itemView address time model =
+  let y = itemY <| animate time model.animation in
   div
     [ style
         [ ("background", "#E6E6EF")
@@ -174,7 +104,6 @@ itemView address model =
     [ text model.item.name ]
 
 maxWidth = 200.0
-
 
 buttonStyle isSelected =
   let highlight =
@@ -199,6 +128,26 @@ buttonStyle isSelected =
   , ("marginRight", "10px")
   ] ++ highlight
 
+view : Address Action -> Model -> Html
+view address model =
+  div [ style [("margin", "10px")] ]
+    [ div [ style [("margin-bottom", "10px")] ]
+        [ button
+            [ style (buttonStyle (model.sort == SortName))
+            , onClick address (Sort SortName) ]
+            [ text "Sort Name" ]
+        , button
+            [ style (buttonStyle (model.sort == SortId))
+            , onClick address (Sort SortId) ]
+            [ text "Sort Id" ]
+        ]
+    -- , div
+        -- []
+        -- (List.map (\model -> pre [] [ text (dump model.transition) ]) model.items)
+    , div
+        [ style [("position", "relative")] ]
+        (List.map (itemView address model.time) model.items)
+    ]
 ------------------------------------------------------------------------------
 
 app =
